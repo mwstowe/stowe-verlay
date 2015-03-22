@@ -3,8 +3,11 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-sound/squeezeboxserver/files/squeezeboxserver.init.d,v 1.1 2009/11/25 22:52:25 lavajoe Exp $
 
+export TZ=America/Chicago
+
 # These fit the Squeezebox Server ebuild and so shouldn't need to be changed;
 # user-servicable parts go in /etc/conf.d/squeezeboxserver.
+run_dir="/var/run/logitechmediaserver"
 pidfile=/var/run/logitechmediaserver/logitechmediaserver.pid
 logdir=/var/log/logitechmediaserver
 varlibdir=/var/lib/logitechmediaserver
@@ -18,7 +21,19 @@ depend() {
 	need net mysql
 }
 
+check_config() {
+	if [ ! -d "${run_dir}" ]; then
+                mkdir "${run_dir}"
+        fi
+
+        # Permission stuff. Should ensure that the daemon user always have write permissions.
+        # Quick and ugly but should get the job done.
+
+        chown -R ${scuser}:${scgroup} "${run_dir}"
+}
+
 start() {
+	check_config
 	ebegin "Starting Logitech Media Server"
 
 	cd /
