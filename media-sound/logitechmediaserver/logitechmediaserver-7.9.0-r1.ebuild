@@ -41,6 +41,7 @@ RDEPEND="
 	virtual/mysql
 	avahi? ( net-dns/avahi )
 	>=dev-lang/perl-5.8.8
+	>=dev-perl/Data-Page-2.20.0-r1
 	>=dev-perl/GD-2.41
 	>=dev-perl/UUID-Tiny-1.40.0
 	>=dev-perl/Network-IPv4Addr-0.05

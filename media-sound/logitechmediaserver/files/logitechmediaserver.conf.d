@@ -22,3 +22,6 @@
 # and so don't need to be present here.
 #SBS_OPTS="--d_startup"
 SBS_OPTS=""
+
+# Set this to the correct timezone setting for the clock on the SB
+TZ="America/Chicago"

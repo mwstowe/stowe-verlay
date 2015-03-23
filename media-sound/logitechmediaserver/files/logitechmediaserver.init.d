@@ -3,8 +3,6 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-sound/squeezeboxserver/files/squeezeboxserver.init.d,v 1.1 2009/11/25 22:52:25 lavajoe Exp $
 
-export TZ=America/Chicago
-
 # These fit the Squeezebox Server ebuild and so shouldn't need to be changed;
 # user-servicable parts go in /etc/conf.d/squeezeboxserver.
 run_dir="/var/run/logitechmediaserver"
