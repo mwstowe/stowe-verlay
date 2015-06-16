@@ -62,6 +62,7 @@ RDEPEND="
 	>=dev-perl/Image-Scale-0.80.0
 	>=dev-perl/EV-4.150.0
 	>=dev-perl/DBD-mysql-4.00.5
+	>=dev-perl/DBD-SQLite-1.350.0
 	>=dev-perl/DBI-1.607
 	>=dev-perl/Digest-SHA1-2.11
 	>=dev-perl/Encode-Detect-1.01
