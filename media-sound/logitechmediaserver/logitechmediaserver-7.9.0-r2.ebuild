@@ -51,6 +51,7 @@ RDEPEND="
 	>=dev-perl/Proc-Background-1.100.0
 	>=dev-perl/Data-URIEncode-0.110.0
 	>=dev-perl/Tie-RegexpHash-0.17
+	>=dev-perl/Text-Unidecode-1.23
 	>=dev-perl/Tie-Cache-LRU-Expires-0.550.0
 	>=dev-perl/Tie-Cache-LRU-20110205.0.0
 	>=dev-perl/URI-Find-20111103.0.0
