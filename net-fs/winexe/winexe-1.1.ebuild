@@ -8,10 +8,11 @@ inherit git-r3 eutils python flag-o-matic
 
 DESCRIPTION="remotely execute commands on Windows NT/2000/XP/2003 systems, with lmhash passthrough support"
 HOMEPAGE="http://sourceforge.net/projects/winexe/"
-EGIT_REPO_URI="http://git.code.sf.net/p/winexe/winexe-waf"
+# EGIT_REPO_URI="http://git.code.sf.net/p/winexe/winexe-waf"
+EGIT_REPO_URI="http://git.code.sf.net/u/mstowe/winexe"
 EGIT_BRANCH="master"
 # EGIT_COMMIT="a1b3526c2272e9308da7e5438efc7f5228afe484"
-EGIT_COMMIT="b787d2a2c4b1abc3653bad10aec943b8efcd7aab"
+EGIT_COMMIT="9f5b8251e85dbdcf44fac4e7613fba800152e41b"
 
 LICENSE="GPL-3"
 SLOT="0"
