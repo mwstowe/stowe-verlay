@@ -3,11 +3,8 @@
 <pkgmetadata>
   <herd>no-herd</herd>
   <maintainer>
-    <email>lavajoe@gentoo.org</email>
-  </maintainer>
-  <maintainer>
-    <email>stuart@hickinbottom.com</email>
-    <name>Stuart Hickinbottom</name>
+    <email>mstowe@chicago.us.mensa.org</email>
+    <name>Michael Stowe</name>
   </maintainer>
   <longdescription lang="en">
     This package provides the Logitech Squeezebox Server audio server.
