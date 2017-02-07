@@ -110,6 +110,7 @@ RDEPEND="
 	>=dev-perl/Class-C3-Componentised-1.0006
 	>=dev-perl/File-ReadBackwards-1.04
     >=dev-perl/Audio-Scan-0.870.0	
+	>=dev-perl/PAR-1.10.0
 	lame? ( media-sound/lame )
 	alac? ( media-sound/alac_decoder )
 	wavpack? ( media-sound/wavpack )
