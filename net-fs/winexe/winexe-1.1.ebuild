@@ -2,9 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=4
+EAPI=5
+PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} )
 
-inherit git-r3 eutils python flag-o-matic
+inherit git-r3 eutils python-single-r1 flag-o-matic
 
 DESCRIPTION="remotely execute commands on Windows NT/2000/XP/2003 systems, with lmhash passthrough support"
 HOMEPAGE="http://sourceforge.net/projects/winexe/"
