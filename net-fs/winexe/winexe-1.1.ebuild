@@ -29,7 +29,7 @@ RDEPEND="${DEPEND}"
 #This probably should be merged into the samba ebuild on a useflag
 
 pkg_setup() {
-        python_single_r1_pkg_setup
+        python-single-r1_pkg_setup
 }
 
 src_prepare() {
