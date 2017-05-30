@@ -23,7 +23,8 @@ IUSE=""
 DEPEND="net-libs/gnutls
 	dev-libs/popt
 	dev-libs/cyrus-sasl
-	>=net-fs/samba-4.0.0"
+	>=net-fs/samba-4.0.0
+	<net-fs/samba-4.3.0"
 RDEPEND="${DEPEND}"
 
 #This probably should be merged into the samba ebuild on a useflag
