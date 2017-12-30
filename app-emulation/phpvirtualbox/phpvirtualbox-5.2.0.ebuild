@@ -22,7 +22,7 @@ RDEPEND="
 "
 DEPEND="app-arch/unzip"
 
-S="${WORKDIR}/phpvirtualbox-5.2.0"
+S="${WORKDIR}/phpvirtualbox-5.2-0-rc1"
 
 DISABLE_AUTOFORMATTING="yes"
 DOC_CONTENTS="
