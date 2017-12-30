@@ -6,7 +6,7 @@ EAPI="5"
 inherit versionator eutils webapp readme.gentoo
 
 MY_PV="$(replace_version_separator 2 '-')"
-MY_P="${PN}-${MY_PV}"
+MY_P="${PN}.${MY_PV}"
 
 DESCRIPTION="Web-based administration for VirtualBox in PHP"
 HOMEPAGE="https://github.com/phpvirtualbox/phpvirtualbox/"
