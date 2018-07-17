@@ -1,6 +1,6 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/www-apps/coppermine/coppermine-1.5.20.ebuild,v 1.2 2012/06/22 22:17:54 mabi Exp $
+# $Header: /var/cvsroot/gentoo-x86/www-apps/coppermine/coppermine-1.5.46.ebuild,v 1.2 2012/06/22 22:17:54 mabi Exp $
 
 EAPI=4
 
@@ -8,7 +8,7 @@ inherit webapp versionator
 
 DESCRIPTION="Web picture gallery written in PHP with a MySQL backend"
 HOMEPAGE="http://coppermine.sourceforge.net/"
-SRC_URI="mirror://sourceforge/eenemeenemuu.u/cpg${PV}.zip"
+SRC_URI="https://downloads.sourceforge.net/project/coppermine/Coppermine/1.5.x/cpg1.5.46.zip?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fcoppermine%2Ffiles%2Flatest%2Fdownload&ts=1531804429"
 
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~sparc ~x86"
