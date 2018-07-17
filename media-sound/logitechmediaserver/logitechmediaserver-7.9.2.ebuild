@@ -17,7 +17,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="lame wavpack musepack alac ogg flac avahi aac bonjour"
-SRC_URI="http://downloads.slimdevices.com/nightly/7.9/sc/095dd88/${MY_P_BUILD_NUM}.tgz"
+SRC_URI="http://downloads.slimdevices.com/LogitechMediaServer_v7.9.0/logitechmediaserver-7.9.0-noCPAN.tgz"
 
 RUN_UID=logitechmediaserver
 RUN_GID=logitechmediaserver
@@ -108,7 +108,7 @@ RDEPEND="
 	>=dev-perl/Class-C3-0.21
 	>=dev-perl/Class-C3-Componentised-1.0006
 	>=dev-perl/File-ReadBackwards-1.04
-    >=dev-perl/Audio-Scan-0.870.0	
+    =dev-perl/Audio-Scan-0.930.0	
 	>=dev-perl/PAR-1.10.0
 	lame? ( media-sound/lame )
 	alac? ( media-sound/alac_decoder )
@@ -122,7 +122,7 @@ RDEPEND="
 	aac? ( media-libs/faad2 )
 	"
 
-S="${WORKDIR}/${MY_P_BUILD_NUM}"
+S="${WORKDIR}/logitechmediaserver-7.9.0-noCPAN"
 
 CPANKEEP="
 	DBIx/
