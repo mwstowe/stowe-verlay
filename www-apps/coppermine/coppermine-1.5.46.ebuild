@@ -8,7 +8,7 @@ inherit webapp versionator
 
 DESCRIPTION="Web picture gallery written in PHP with a MySQL backend"
 HOMEPAGE="http://coppermine.sourceforge.net/"
-SRC_URI="https://downloads.sourceforge.net/project/coppermine/Coppermine/1.5.x/cpg1.5.46.zip?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fcoppermine%2Ffiles%2Flatest%2Fdownload&ts=1531804429"
+SRC_URI="https://downloads.sourceforge.net/project/coppermine/Coppermine/1.5.x/cpg1.5.46.zip"
 
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~sparc ~x86"
