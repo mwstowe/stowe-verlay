@@ -1,0 +1,67 @@
+--- check_disk_btrfs	2018-07-29 00:25:57.850000000 -0500
++++ check_disk_btrfs.new	2018-07-29 00:26:55.780000000 -0500
+@@ -42,6 +42,7 @@
+ # works based on those contributions, and sublicense and distribute
+ # those contributions and any derivatives thereof.
+ 
++import six
+ import sys
+ import pipes
+ import traceback
+@@ -54,7 +55,7 @@
+ 
+ VERSION = '2.1.1'
+ sudo_path = "/usr/bin/sudo"
+-btrfs_path = "/usr/sbin/btrfs"
++btrfs_path = "/sbin/btrfs"
+ verbose = True
+ 
+ class BtrfsCommandError(Exception):
+@@ -75,7 +76,7 @@
+ 	cmd += [ btrfs_path, 'filesystem', 'usage', '-b', btrfs_vol ] # -b (raw)
+ 
+ 	if verbose:
+-		print " ".join(cmd)
++		print (" ".join(cmd))
+ 
+ 	# setup timeout
+ 	signal(SIGALRM, _alarm_handler)
+@@ -90,7 +91,7 @@
+ 		process.kill()
+ 
+         # Re-throw the exception
+-		raise sys.exc_info()[1], None, sys.exc_info()[2]
++		raise_(sys.exc_info()[1], None, sys.exc_info()[2])
+ 
+     # results in unknown error status
+ 	if p.returncode != 0:
+@@ -127,7 +128,7 @@
+ 		used = m.groups(0)[2]
+ 
+ 		if verbose:
+-			print "Label: %s, Total: %s, Used: %s" % (label, total, used)
++			print ("Label: %s, Total: %s, Used: %s" % (label, total, used))
+ 
+ 		values[label] = (total, used)
+ 
+@@ -233,7 +234,7 @@
+ 		out_str = "OK: %s" % (", ".join(ok))
+ 		exit_code = 0
+ 
+-	print "%s | %s" % (out_str, " ".join(perfdata))
++	print ("%s | %s" % (out_str, " ".join(perfdata)))
+ 	return exit_code
+ 
+ if __name__ == '__main__':
+@@ -241,9 +242,9 @@
+         sys.exit(main())
+     except SystemExit:
+         # Re-throw the exception
+-        raise sys.exc_info()[1], None, sys.exc_info()[2]
++        raise_ (sys.exc_info()[1], None, sys.exc_info()[2])
+     except:
+-        print "UNKNOWN - Error: %s" % (str(sys.exc_info()[1]))
++        print ("UNKNOWN - Error: %s" % (str(sys.exc_info()[1])))
+         if verbose:
+             traceback.print_tb(sys.exc_info()[2])
+         sys.exit(3)
