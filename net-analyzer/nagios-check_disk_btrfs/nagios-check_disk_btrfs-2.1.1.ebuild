@@ -3,7 +3,9 @@
 
 EAPI=5
 
-inherit multilib git-r3 epatch
+PYTHON_COMPAT=( python{3_4,3_5,3_6} )
+
+inherit multilib git-r3 epatch python-r1
 
 DESCRIPTION="Brtfs Monitoring Plugin for Nagios/Icinga"
 HOMEPAGE="https://github.com/NETWAYS/check_disk_btrfs"
