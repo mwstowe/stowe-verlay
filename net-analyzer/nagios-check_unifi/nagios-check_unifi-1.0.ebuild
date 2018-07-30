@@ -5,7 +5,7 @@ EAPI=5
 
 PYTHON_COMPAT=( python{3_4,3_5,3_6} )
 
-inherit multilib git-r3 python-single-r1
+inherit multilib git-r3 epatch python-single-r1
 
 DESCRIPTION="UniFi Monitoring Plugin for Nagios/Icinga"
 HOMEPAGE="https://github.com/msweetser/check_unifi/"
@@ -19,7 +19,11 @@ KEYWORDS="~amd64"
 IUSE=""
 
 DEPEND=""
-RDEPEND="dev-python/unifi"
+RDEPEND="dev-python/pyunifi"
+
+src_prepare() {
+	epatch ${FILESDIR}/${P}.patch
+	}
 
 src_install() {
 	exeinto /usr/$(get_libdir)/nagios/plugins

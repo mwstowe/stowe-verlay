@@ -1,5 +1,5 @@
---- controller.py	2018-07-30 11:41:16.360387563 -0700
-+++ controllernew.py	2018-07-29 22:37:25.461659967 -0700
+--- pyunifi/controller.py	2018-07-30 11:41:16.360387563 -0700
++++ pyunificontrollernew.py	2018-07-29 22:37:25.461659967 -0700
 @@ -79,7 +79,7 @@
          self.ssl_verify = ssl_verify
  
