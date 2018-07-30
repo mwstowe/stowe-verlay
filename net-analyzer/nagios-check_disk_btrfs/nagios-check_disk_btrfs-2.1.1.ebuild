@@ -22,6 +22,10 @@ DEPEND=""
 RDEPEND="app-admin/sudo
 		 sys-fs/btrfs-progs"
 
+src_prepare() {
+	epatch ${FILESDIR}/${P}.patch
+	}
+
 src_install() {
 	exeinto /usr/$(get_libdir)/nagios/plugins
 	doexe check_disk_btrfs
