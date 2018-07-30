@@ -3,7 +3,7 @@
 
 EAPI=5
 
-PYTHON_COMPAT=( python{3_4,3_5,3_6} )
+PYTHON_COMPAT=( python{2_7} )
 
 inherit multilib git-r3 epatch python-r1
 
@@ -19,13 +19,8 @@ KEYWORDS="~amd64"
 IUSE=""
 
 DEPEND=""
-RDEPEND="dev-python/six
-		 app-admin/sudo
+RDEPEND="app-admin/sudo
 		 sys-fs/btrfs-progs"
-
-src_prepare() {
-	epatch ${FILESDIR}/${P}.patch
-	}
 
 src_install() {
 	exeinto /usr/$(get_libdir)/nagios/plugins
