@@ -1,0 +1,11 @@
+--- controller.py	2018-07-30 11:41:16.360387563 -0700
++++ controllernew.py	2018-07-29 22:37:25.461659967 -0700
+@@ -79,7 +79,7 @@
+         self.ssl_verify = ssl_verify
+ 
+         if ssl_verify is False:
+-            warnings.simplefilter("default", category=requests.packages.
++            warnings.simplefilter("ignore", category=requests.packages.
+                                   urllib3.exceptions.InsecureRequestWarning)
+ 
+         self.session = requests.Session()

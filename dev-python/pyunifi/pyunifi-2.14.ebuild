@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6} )
 inherit distutils-r1
 
 DESCRIPTION="Unifi API library for Python"
-HOMEPAGE="https://pypi.org/project/unifi/"
+HOMEPAGE="https://pypi.org/project/pyunifi/"
 SRC_URI="mirror://pypi/${P:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="MIT License"
@@ -22,3 +22,7 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	"
+
+src_prepare() {
+    epatch ${FILESDIR}/${P}.patch
+	    }
