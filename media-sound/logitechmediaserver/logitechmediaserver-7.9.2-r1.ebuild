@@ -7,7 +7,8 @@ inherit eutils user
 
 MAJOR_VER="${PV:0:3}"
 MINOR_VER="${PV:4:1}"
-BUILD_NUM="1487582706"
+BUILD_NUM="1530185314"
+HASHID="cb4085808d35eb09ff067e1c1a9a0e9a75fe4551"
 MY_P="logitechmediaserver-${MAJOR_VER}.${MINOR_VER}-noCPAN"
 MY_P_BUILD_NUM="logitechmediaserver-${MAJOR_VER}.${MINOR_VER}-${BUILD_NUM}-noCPAN"
 
@@ -17,7 +18,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="lame wavpack musepack alac ogg flac avahi aac bonjour"
-SRC_URI="http://downloads.slimdevices.com/LogitechMediaServer_v7.9.0/logitechmediaserver-7.9.0-noCPAN.tgz"
+SRC_URI="http://downloads.slimdevices.com/nightly/7.9/sc/${HASHID}/logitechmediaserver-7.9.2-${BUILD_NUM}-noCPAN.tgz"
 
 RUN_UID=logitechmediaserver
 RUN_GID=logitechmediaserver
@@ -122,7 +123,7 @@ RDEPEND="
 	aac? ( media-libs/faad2 )
 	"
 
-S="${WORKDIR}/logitechmediaserver-7.9.0-noCPAN"
+S="${WORKDIR}/logitechmediaserver-7.9.2-${BUILD_NUM}-noCPAN"
 
 CPANKEEP="
 	DBIx/
