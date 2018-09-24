@@ -18,7 +18,7 @@ DEPEND="app-arch/unzip"
 RDEPEND="virtual/httpd-php
 	dev-lang/php[gd,mysql]"
 
-S="${WORKDIR}"/$(version_format_string 'cpg$1$2x')
+S="${WORKDIR}"/$(version_format_string 'cpg$1.$2.x-cpg$1.$2.$3')
 
 need_httpd_cgi
 
