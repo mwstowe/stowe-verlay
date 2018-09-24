@@ -26,8 +26,7 @@ src_install() {
 	webapp_src_preinst
 
 	dodoc CHANGELOG.txt README.txt
-	dohtml -r docs
-	rm -rf CHANGELOG.txt README.txt COPYING docs/
+	rm -rf CHANGELOG.txt README.txt 
 
 	insinto "${MY_HTDOCSDIR}"
 	doins -r .
