@@ -33,8 +33,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-#	epatch "${FILESDIR}"/winexe-passthrough.patch
-#	epatch "${FILESDIR}"/make-proto.pl.patch
 	echo .
 }
 src_configure() {
