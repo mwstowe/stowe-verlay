@@ -1,11 +1,11 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6} )
+PYTHON_COMPAT=( python3_{7..9} pypy3 )
 
-inherit distutils-r1 epatch
+inherit python-any-r1 
 
 DESCRIPTION="Unifi API library for Python"
 HOMEPAGE="https://pypi.org/project/pyunifi/"
@@ -17,13 +17,17 @@ KEYWORDS="~amd64"
 IUSE=""
 
 RDEPEND="
-	dev-python/urllib3[${PYTHON_USEDEP}]
+	$(python_gen_any_dep '
+		dev-python/urllib3[${PYTHON_USEDEP}]
+		')
 "
 DEPEND="${RDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
+	"
+BDEPEND="${PYTHON_DEPS}
+	virtual/pkgconfig
 	"
 
 src_prepare() {
-    epatch ${FILESDIR}/${P}.patch
+    eapply ${FILESDIR}/${P}.patch
 	eapply_user
 	    }
