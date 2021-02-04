@@ -19,6 +19,9 @@ IUSE=""
 RDEPEND="
 "
 DEPEND="${RDEPEND}
+	$(python_gen_any_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		')
 	"
 BDEPEND="${PYTHON_DEPS}
 	virtual/pkgconfig
