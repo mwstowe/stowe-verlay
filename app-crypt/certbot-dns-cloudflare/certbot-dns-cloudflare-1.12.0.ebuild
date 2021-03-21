@@ -3,6 +3,7 @@
 
 EAPI=7
 PYTHON_COMPAT=(python{3_7,3_8,3_9})
+DISTUTILS_USE_SETUPTOOLS=rdepend
 
 if [[ ${PV} == 9999* ]]; then
 	EGIT_REPO_URI="https://github.com/certbot/certbot.git"
