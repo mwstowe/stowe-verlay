@@ -1,18 +1,19 @@
 # Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 
-inherit versionator eutils webapp readme.gentoo
+inherit eapi7-ver webapp 
 
-MY_PV="$(replace_version_separator 2 '-')"
+MY_PV="$(ver_rs 2 '-')"
 MY_P="${PN}.${MY_PV}"
 
 DESCRIPTION="Web-based administration for VirtualBox in PHP"
 HOMEPAGE="https://github.com/phpvirtualbox/phpvirtualbox/"
-SRC_URI="https://github.com/cesium147/phpvirtualbox/archive/6.1-0.zip"
+#SRC_URI="https://github.com/cesium147/phpvirtualbox/archive/6.1-0.zip"
+SRC_URI="https://github.com/phpvirtualbox/phpvirtualbox/archive/develop.zip -> ${P}.zip"
 
-LICENSE="GPL-2"
+LICENSE="GPL-3"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
@@ -22,28 +23,12 @@ RDEPEND="
 "
 DEPEND="app-arch/unzip"
 
-S="${WORKDIR}/phpvirtualbox-6.1-0"
-
-DISABLE_AUTOFORMATTING="yes"
-DOC_CONTENTS="
-Local or remote virtualbox hosts must be compiled with
-'vboxwebsrv' useflag and the respective init script
-must be running to use this interface:
-/etc/init.d/vboxwebsrv start
-
-To enable the automatic startup mode feature uncomment the
-following line in the config.php file:
-var \$startStopConfig = true;
-
-You should also add the /etc/init.d/vboxinit script to the
-default runlevel on the virtualbox host:
-\`rc-update add vboxinit default\`
-If the server is on a remote host, than the script must be
-copied manually from
-'${FILESDIR}'/vboxinit-initd to
-/etc/init.d/vboxinit on the remote host."
+S="${WORKDIR}/phpvirtualbox-develop"
 
 src_install() {
+
+	local DISABLE_AUTOFORMATTING="true"
+
 	webapp_src_preinst
 
 	dodoc CHANGELOG.txt LICENSE.txt README.md
