@@ -21,8 +21,4 @@ BDEPEND="test? (
 
 DOCS=( CHANGES.md README.md doc/yenc-draft.1.3.txt )
 
-PATCHES=(
-	"${FILESDIR}/${P}-fix-segfault.patch"
-)
-
 distutils_enable_tests pytest
