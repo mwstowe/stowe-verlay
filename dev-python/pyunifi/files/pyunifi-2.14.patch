@@ -1,5 +1,5 @@
---- pyunifi/controller.py	2018-07-30 11:41:16.360387563 -0700
-+++ pyunificontrollernew.py	2018-07-29 22:37:25.461659967 -0700
+--- pyunifi-2.14/pyunifi/controller.py.old	2023-01-03 06:17:00.809961290 -0600
++++ pyunifi-2.14/pyunifi/controller.py	2023-01-03 06:17:20.673294041 -0600
 @@ -79,7 +79,7 @@
          self.ssl_verify = ssl_verify
  

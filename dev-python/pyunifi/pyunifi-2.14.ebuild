@@ -3,9 +3,9 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} pypy3 )
+PYTHON_COMPAT=( python3_{8..10} pypy3 )
 
-inherit python-any-r1 
+inherit python-r1
 
 DESCRIPTION="Unifi API library for Python"
 HOMEPAGE="https://pypi.org/project/pyunifi/"
@@ -15,6 +15,10 @@ LICENSE="MIT License"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
+
+PATCHES=(
+	"${FILESDIR}/${P}.patch"
+	)
 
 RDEPEND="
 	$(python_gen_any_dep '
@@ -27,7 +31,3 @@ BDEPEND="${PYTHON_DEPS}
 	virtual/pkgconfig
 	"
 
-src_prepare() {
-    eapply ${FILESDIR}/${P}.patch
-	eapply_user
-	    }
