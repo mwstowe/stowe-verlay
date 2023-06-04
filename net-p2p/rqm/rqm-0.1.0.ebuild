@@ -211,5 +211,5 @@ src_install() {
 	insinto /etc/rqm
 	doins "${WORKDIR}/${P}/rqm.conf.example"
 
-	systemd_douserunit "${WORKDIR}/${P}/systemd/rqm.service"
+	systemd_dounit "${WORKDIR}/${P}/systemd/rqm.service"
 }
