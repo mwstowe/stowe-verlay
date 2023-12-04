@@ -13,7 +13,7 @@ MY_P="${PN}.${MY_PV}"
 
 DESCRIPTION="Web-based administration for VirtualBox in PHP"
 HOMEPAGE="https://github.com/phpvirtualbox/phpvirtualbox/"
-SRC_URI="https://github.com/tom077/phpvirtualbox/archive/develop.zip -> ${P}.zip"
+SRC_URI="https://github.com/tom077/phpvirtualbox/archive/refs/heads/PR1.zip -> ${P}.zip"
 RESTRICT="mirror"
 LICENSE="GPL-3"
 KEYWORDS="~amd64 ~x86"
