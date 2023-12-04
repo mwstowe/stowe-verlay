@@ -13,7 +13,7 @@ MY_P="${PN}.${MY_PV}"
 
 DESCRIPTION="Web-based administration for VirtualBox in PHP"
 HOMEPAGE="https://github.com/phpvirtualbox/phpvirtualbox/"
-SRC_URI="https://github.com/tom077/phpvirtualbox/archive/refs/heads/PR1.zip -> ${P}.zip"
+SRC_URI="https://github.com/xxsamxx1991/phpvirtualbox_vbox70_php82/archive/refs/heads/develop.zip -> ${P}.zip"
 RESTRICT="mirror"
 LICENSE="GPL-3"
 KEYWORDS="~amd64 ~x86"
@@ -25,7 +25,7 @@ RDEPEND="
 "
 DEPEND="app-arch/unzip"
 
-S="${WORKDIR}/phpvirtualbox-PR1"
+S="${WORKDIR}/phpvirtualbox-develop"
 
 src_install() {
 
