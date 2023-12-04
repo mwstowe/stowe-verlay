@@ -25,7 +25,7 @@ RDEPEND="
 "
 DEPEND="app-arch/unzip"
 
-S="${WORKDIR}/phpvirtualbox-develop"
+S="${WORKDIR}/phpvirtualbox_vbox70_php82-develop"
 
 src_install() {
 
