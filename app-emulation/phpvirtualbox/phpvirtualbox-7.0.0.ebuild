@@ -25,7 +25,7 @@ RDEPEND="
 "
 DEPEND="app-arch/unzip"
 
-S="${WORKDIR}/phpvirtualbox-develop"
+S="${WORKDIR}/phpvirtualbox-PR1"
 
 src_install() {
 
