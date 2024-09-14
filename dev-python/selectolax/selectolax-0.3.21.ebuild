@@ -8,9 +8,9 @@ LITERALNAME="${PN}"
 REALVERSION="${PV}"
 DIGEST_SOURCES="yes"
 PYTHON_COMPAT=( python{3_10,3_11,3_12} )
-DISTUTILS_USE_PEP517=standalone
+DISTUTILS_USE_PEP517=setuptools
 
-inherit python-r1 pypi
+inherit pypi distutils-r1
 
 DESCRIPTION="Fast HTML5 parser with CSS selectors."
 
@@ -27,3 +27,4 @@ IUSE="cython"
 DEPENDENCIES="cython? ( ~dev-python/cython-0.29.36[${PYTHON_USEDEP}] )"
 BDEPEND="${DEPENDENCIES}"
 RDEPEND="${DEPENDENCIES}"
+
