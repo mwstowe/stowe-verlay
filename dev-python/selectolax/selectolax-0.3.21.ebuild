@@ -10,7 +10,7 @@ DIGEST_SOURCES="yes"
 PYTHON_COMPAT=( python{3_10,3_11,3_12} )
 DISTUTILS_USE_PEP517=standalone
 
-inherit python-r1 gs-pypi
+inherit python-r1 pypi
 
 DESCRIPTION="Fast HTML5 parser with CSS selectors."
 
