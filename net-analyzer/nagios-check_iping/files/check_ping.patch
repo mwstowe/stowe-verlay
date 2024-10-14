@@ -1,0 +1,96 @@
+--- plugins/plugins/check_ping.c	2024-10-14 13:39:54.766975950 -0700
++++ plugins/check_ping.c	2023-06-18 15:21:09.984840713 -0700
+@@ -60,6 +60,7 @@
+ int cpl = UNKNOWN_PACKET_LOSS;
+ float wrta = UNKNOWN_TRIP_TIME;
+ float crta = UNKNOWN_TRIP_TIME;
++char interface[32]="";
+ char **addresses = NULL;
+ int n_addresses = 0;
+ int max_addr = 1;
+@@ -80,6 +81,7 @@
+ {
+ 	char *cmd = NULL;
+ 	char *rawcmd = NULL;
++	char *argsnaddr = NULL;
+ 	int result = STATE_UNKNOWN;
+ 	int this_result = STATE_UNKNOWN;
+ 	int i;
+@@ -121,16 +123,23 @@
+ #else
+ 		rawcmd = strdup(PING_COMMAND);
+ #endif
++		if (strlen(interface)>0) 
++			xasprintf(&argsnaddr, "-I %s %s", interface, addresses[i]);
++		else
++			argsnaddr=strdup(addresses[i]);
++
++		
++
+ 
+ 		/* does the host address of number of packets argument come first? */
+ #ifdef PING_PACKETS_FIRST
+ # ifdef PING_HAS_TIMEOUT
+-		xasprintf (&cmd, rawcmd, timeout_interval, max_packets, addresses[i]);
++		xasprintf (&cmd, rawcmd, timeout_interval, max_packets, argsnaddr);
+ # else
+-		xasprintf (&cmd, rawcmd, max_packets, addresses[i]);
++		xasprintf (&cmd, rawcmd, max_packets, argsnaddr);
+ # endif
+ #else
+-		xasprintf (&cmd, rawcmd, addresses[i], max_packets);
++		xasprintf (&cmd, rawcmd, argsnaddr, max_packets);
+ #endif
+ 
+ 		if (verbose >= 2)
+@@ -187,6 +196,7 @@
+ 		result = max_state (result, this_result);
+ 		free (rawcmd);
+ 		free (cmd);
++		free (argsnaddr);
+ 	}
+ 
+ 	return result;
+@@ -208,6 +218,7 @@
+ 		{"show-resolution", no_argument, 0, 's'},
+ 		{"nohtml", no_argument, 0, 'n'},
+ 		{"link", no_argument, 0, 'L'},
++		{"interface", no_argument, 0, 'I'},
+ 		{"use-ipv4", no_argument, 0, '4'},
+ 		{"use-ipv6", no_argument, 0, '6'},
+ 		{0, 0, 0, 0}
+@@ -224,7 +235,7 @@
+ 	}
+ 
+ 	while (1) {
+-		c = getopt_long (argc, argv, "VvhsnL46t:c:w:H:p:", longopts, &option);
++		c = getopt_long (argc, argv, "VvhsnL46tI:c:w:H:p:", longopts, &option);
+ 
+ 		if (c == -1 || c == EOF)
+ 			break;
+@@ -256,6 +267,9 @@
+ 			usage (_("IPv6 support not available\n"));
+ #endif
+ 			break;
++		case 'I':	/* interface */
++			strncpy(interface,optarg,32);
++			break;
+ 		case 'H':	/* hostname */
+ 			ptr=optarg;
+ 			while (1) {
+@@ -604,6 +618,7 @@
+ 
+ 	printf (" %s\n", "-H, --hostname=HOST");
+   printf ("    %s\n", _("host to ping"));
++  printf (" %s\n", "-I, --interface=IF");
+   printf (" %s\n", "-w, --warning=THRESHOLD");
+   printf ("    %s\n", _("warning threshold pair"));
+   printf (" %s\n", "-c, --critical=THRESHOLD");
+@@ -636,6 +651,6 @@
+ print_usage (void)
+ {
+   printf ("%s\n", _("Usage:"));
+-	printf ("%s -H <host_address> -w <wrta>,<wpl>%% -c <crta>,<cpl>%%\n", progname);
++	printf ("%s -I <interface> -H <host_address> -w <wrta>,<wpl>%% -c <crta>,<cpl>%%\n", progname);
+   printf (" [-p packets] [-t timeout] [-4|-6]\n");
+ }
