@@ -5,11 +5,14 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{10..12} pypy3 )
 
-inherit python-r1
+inherit distutils-r1 pypi
 
+DISTUTILS_USE_PEP517=setuptools
 DESCRIPTION="Unifi API library for Python"
 HOMEPAGE="https://pypi.org/project/pyunifi/"
-SRC_URI="mirror://pypi/${P:0:1}/${PN}/${P}.tar.gz"
+SRC_URI="$(pypi_sdist_url "${PN^}" "${PV}")"
+
+S=${WORKDIR}/${P}
 
 LICENSE="MIT License"
 SLOT="0"

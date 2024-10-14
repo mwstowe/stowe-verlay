@@ -1,0 +1,12 @@
+--- pyunifi-2.21/pyunifi/controller.py	2024-10-14 18:42:33.856018004 -0500
++++ pyunifi-2.21/pyunifi/controller.py	2024-10-14 18:43:14.912682853 -0500
+@@ -107,7 +107,8 @@
+             raise APIError("%s controllers no longer supported" % version)
+ 
+         if ssl_verify is False:
+-            warnings.simplefilter("default", category=InsecureRequestWarning)
++            warnings.simplefilter("ignore", category=requests.packages.
++                                   urllib3.exceptions.InsecureRequestWarning)
+ 
+         self.log.debug("Controller for %s", self.url)
+         self._login()
