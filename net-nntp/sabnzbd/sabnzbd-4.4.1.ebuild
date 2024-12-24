@@ -22,7 +22,7 @@ S="${WORKDIR}/${MY_P}"
 # Sabnzbd is GPL-2 but bundles software with the following licenses.
 LICENSE="GPL-2 BSD LGPL-2 MIT BSD-1"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="amd64"
 IUSE="test"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
@@ -32,17 +32,18 @@ DEPEND="
 	acct-group/sabnzbd
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
+		>=dev-python/apprise-1.8.0[${PYTHON_USEDEP}]
 		dev-python/chardet[${PYTHON_USEDEP}]
 		dev-python/cheetah3[${PYTHON_USEDEP}]
 		dev-python/cherrypy[${PYTHON_USEDEP}]
 		dev-python/configobj[${PYTHON_USEDEP}]
 		dev-python/cryptography[${PYTHON_USEDEP}]
 		>=dev-python/feedparser-6.0.11[${PYTHON_USEDEP}]
-		>=dev-python/guessit-3.7.1[${PYTHON_USEDEP}]
+		>=dev-python/guessit-3.8.0[${PYTHON_USEDEP}]
 		dev-python/notify2[${PYTHON_USEDEP}]
 		dev-python/portend[${PYTHON_USEDEP}]
 		dev-python/puremagic[${PYTHON_USEDEP}]
-		~dev-python/sabctools-8.1.0[${PYTHON_USEDEP}]
+		~dev-python/sabctools-8.2.3[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND="
@@ -58,10 +59,12 @@ BDEPEND="
 		$(python_gen_cond_dep '
 			dev-python/flaky[${PYTHON_USEDEP}]
 			>=dev-python/lxml-4.5.0[${PYTHON_USEDEP}]
-			dev-python/pyfakefs[${PYTHON_USEDEP}]
+			<dev-python/pyfakefs-5.4.0[${PYTHON_USEDEP}]
+			dev-python/pytest-asyncio[${PYTHON_USEDEP}]
 			dev-python/pytest-httpbin[${PYTHON_USEDEP}]
 			dev-python/pytest-httpserver[${PYTHON_USEDEP}]
-			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-mock[${PYTHON_USEDEP}]
+			~dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
 			dev-python/requests[${PYTHON_USEDEP}]
 			dev-python/selenium[${PYTHON_USEDEP}]
 			dev-python/tavalidate[${PYTHON_USEDEP}]
@@ -92,8 +95,6 @@ src_test() {
 		'tests/test_newswrapper.py::TestNewsWrapper'
 		'tests/test_happyeyeballs.py::TestHappyEyeballs'
 		'tests/test_internetspeed.py::TestInternetSpeed'
-		# Doesn't work, complains mocker missing even when pytest-mock installed
-		'tests/test_dirscanner.py::TestDirScanner'
 		# Just plain fails
 		'tests/test_newsunpack.py::TestPar2Repair::test_basic'
 		# Chromedriver tests don't want to behave in portage
@@ -113,10 +114,22 @@ src_test() {
 		'tests/test_functional_misc.py::TestQueueRepair::test_queue_repair'
 		'tests/test_functional_misc.py::TestDaemonizing::test_daemonizing'
 		'tests/test_functional_sorting.py::TestDownloadSorting'
+		# Bug https://bugs.gentoo.org/934331 fixed in 4.3.3.
+		'tests/test_sorting.py::TestSortingSorter'
+		# cryptography-43, https://bugs.gentoo.org/938453
+		'tests/test_utils/test_cert_gen.py::TestCertGen::test_generate_key_custom[512-test_key.pem]'
 	)
 
+	# The test suite is prone to being broken by random plugins that happen
+	# to be installed, so disable autoloading.
 	local -x PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
-	local -x PYTEST_PLUGINS=tavern._core.pytest
+	# Use PYTEST_PLUGINS instead of args to 'epytest' because the test suite
+	# calls pytest itself and the args would get lost. To get the list of plugins,
+	# if stuck, comment out the AUTOLOAD line above, look at the list of loaded
+	# plugins at the top of the pytest output, then translate those into module names
+	# by e.g. checking equery f.
+	local -x PYTEST_PLUGINS=pytest_mock,tavern,tavern._core.pytest,pyfakefs.pytest_plugin,pytest_asyncio.plugin
+
 	epytest -s
 }
 
