@@ -3,16 +3,15 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} pypy3 )
-
-inherit distutils-r1
-
 DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{11..13} pypy3 )
+
+inherit pypi distutils-r1
 
 DESCRIPTION="Google News Decoder"
 HOMEPAGE="https://pypi.org/project/googlenewsdecoder/"
-#SRC_URI="mirror://pypi/${P:0:1}/${PN}/${P}.tar.gz"
-SRC_URL="https://github.com/SSujitX/google-news-url-decoder/archive/refs/tags/0.1.6.zip"
+SRC_URI="mirror://pypi/${P:0:1}/${PN}/${P}.tar.gz"
+#SRC_URL="https://github.com/SSujitX/google-news-url-decoder/archive/refs/tags/0.1.7.zip"
 
 LICENSE="MIT License"
 SLOT="0"
