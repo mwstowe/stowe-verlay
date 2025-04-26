@@ -10,9 +10,11 @@ inherit pypi distutils-r1
 
 DESCRIPTION="Google News Decoder"
 HOMEPAGE="https://pypi.org/project/googlenewsdecoder/"
-SRC_URI="mirror://pypi/${P:0:1}/${PN}/${P}.tar.gz"
-#SRC_URL="https://github.com/SSujitX/google-news-url-decoder/archive/refs/tags/0.1.7.zip"
+SRC_URI="$(pypi_sdist_url "${PN^}" "${PV}")" 
 
+S=${WORKDIR}/${P}
+
+RESTRICT="mirror"
 LICENSE="MIT License"
 SLOT="0"
 KEYWORDS="~amd64"
