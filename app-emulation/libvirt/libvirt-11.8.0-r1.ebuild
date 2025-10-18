@@ -19,8 +19,14 @@ if [[ ${PV} = *9999* ]]; then
 	EGIT_REPO_URI="https://gitlab.com/libvirt/libvirt.git"
 	EGIT_BRANCH="master"
 else
-	SRC_URI="https://download.libvirt.org/${P}.tar.xz
-		verify-sig? ( https://download.libvirt.org/${P}.tar.xz.asc )"
+	SRC_URI="
+		https://download.libvirt.org/${P}.tar.xz
+		https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}.tar.xz
+		verify-sig? (
+			https://download.libvirt.org/${P}.tar.xz.asc
+			https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}.tar.xz.asc
+		)
+	"
 	KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 fi
 
@@ -31,16 +37,15 @@ SLOT="0/${PV}"
 IUSE="
 	apparmor audit bash-completion +caps dtrace firewalld fuse glusterfs
 	iscsi iscsi-direct +libvirtd lvm libssh libssh2 lxc nbd nfs nls numa
-	openvz parted pcap policykit +qemu rbd sasl selinux test +udev
+	parted pcap policykit +qemu rbd sasl selinux test +udev
 	virtiofsd virtualbox +virt-network wireshark-plugins xen zfs
 "
 RESTRICT="!test? ( test )"
 
 REQUIRED_USE="
 	firewalld? ( virt-network )
-	libvirtd? ( || ( lxc openvz qemu virtualbox xen ) )
+	libvirtd? ( || ( lxc qemu virtualbox xen ) )
 	lxc? ( caps libvirtd )
-	openvz? ( libvirtd )
 	qemu? ( libvirtd )
 	virt-network? ( libvirtd )
 	virtualbox? ( libvirtd )
@@ -127,8 +132,8 @@ RDEPEND="
 		sys-apps/iproute2[-minimal]
 	)
 	virtiofsd? ( app-emulation/virtiofsd )
-	virtualbox? ( app-emulation/virtualbox )
-	wireshark-plugins? ( >=net-analyzer/wireshark-2.6.0:= )
+	virtualbox? ( >=app-emulation/virtualbox-6.1.0 )
+	wireshark-plugins? ( <net-analyzer/wireshark-4.6.0:= )
 	xen? (
 		>=app-emulation/xen-4.9.0
 		app-emulation/xen-tools:=
@@ -281,7 +286,6 @@ src_configure() {
 		$(meson_feature nls)
 		$(meson_feature numa numactl)
 		$(meson_feature numa numad)
-		$(meson_feature openvz driver_openvz)
 		$(meson_feature parted storage_disk)
 		$(meson_feature pcap libpcap)
 		$(meson_feature policykit polkit)
@@ -298,6 +302,7 @@ src_configure() {
 		$(meson_feature xen driver_libxl)
 		$(meson_feature zfs storage_zfs)
 
+		-Ddriver_openvz=disabled
 		-Dnetcf=disabled
 		-Dsanlock=disabled
 		-Dopenwsman=disabled
