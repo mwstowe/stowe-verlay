@@ -48,10 +48,12 @@ src_install() {
 		newinitd "${FILESDIR}"/vboxinit-initd vboxinit
 	fi
 
-#	readme.gentoo_create_doc
+	dodir "${MY_HTDOCSDIR}/endpoints/lib"
+		dosym vboxweb-7.2.wsdl "${MY_HTDOCSDIR}/endpoints/lib/vboxweb.wsdl"
+		dosym vboxwebService-7.2.wsdl "${MY_HTDOCSDIR}/endpoints/lib/vboxwebService.wsdl"
+
 }
 
 pkg_postinst() {
 	webapp_pkg_postinst
-	readme.gentoo_print_elog
 }
