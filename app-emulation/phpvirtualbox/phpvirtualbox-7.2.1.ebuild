@@ -12,8 +12,8 @@ MY_PV="$(ver_rs 2 '-')"
 MY_P="${PN}.${MY_PV}"
 
 DESCRIPTION="Web-based administration for VirtualBox in PHP"
-HOMEPAGE="https://github.com/mwstowe/phpvirtualbox/"
-SRC_URI="https://github.com/mwstowe/phpvirtualbox/archive/refs/tags/v7.2.tar.gz -> ${P}.tar.gz"
+HOMEPAGE="https://github.com/phpvirtualbox/phpvirtualbox/"
+SRC_URI="https://github.com/phpvirtualbox/phpvirtualbox/archive/refs/tags/7.2-1.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
 LICENSE="GPL-3"
 KEYWORDS="~amd64 ~x86"
@@ -24,7 +24,7 @@ RDEPEND="
 	virtual/httpd-php:*
 "
 
-S="${WORKDIR}/phpvirtualbox-7.2"
+S="${WORKDIR}/phpvirtualbox-7.2-1"
 
 src_install() {
 
@@ -48,8 +48,10 @@ src_install() {
 		newinitd "${FILESDIR}"/vboxinit-initd vboxinit
 	fi
 
+#	readme.gentoo_create_doc
 }
 
 pkg_postinst() {
 	webapp_pkg_postinst
+	readme.gentoo_print_elog
 }
