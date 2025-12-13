@@ -4,7 +4,7 @@
 EAPI=8
 
 # Short one-line description of this package.
-DESCRIPTION="The Amazon Q CLI tool"
+DESCRIPTION="The Amazon KIRO CLI tool (formerly known a Q)"
 
 # Homepage, not used by Portage directly but handy for developer reference
 HOMEPAGE="https://aws.amazon.com/q/"

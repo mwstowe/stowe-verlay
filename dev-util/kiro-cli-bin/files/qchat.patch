@@ -1,0 +1,6 @@
+--- a/bin/qchat
++++ b/bin/qchat
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-"$HOME/.local/bin/kiro-cli" --show-legacy-warning chat "$@"
++kiro-cli --show-legacy-warning chat "$@"

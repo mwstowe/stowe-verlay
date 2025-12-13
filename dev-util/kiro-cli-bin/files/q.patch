@@ -1,0 +1,6 @@
+--- a/bin/q
++++ b/bin/q
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-"$HOME/.local/bin/kiro-cli" --show-legacy-warning "$@"
++kiro-cli --show-legacy-warning "$@"

@@ -4,14 +4,14 @@
 EAPI=8
 
 # Short one-line description of this package.
-DESCRIPTION="The Amazon Q CLI tool"
+DESCRIPTION="The Amazon KIRO CLI tool (formerly known a Q)"
 
 # Homepage, not used by Portage directly but handy for developer reference
-HOMEPAGE="https://aws.amazon.com/q/"
+HOMEPAGE="https://kiro.dev/docs/cli/"
 
 # Point to any required sources; these will be automatically downloaded by
 # Portage.
-SRC_URI="https://desktop-release.q.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip"
+SRC_URI="https://desktop-release.q.us-east-1.amazonaws.com/latest/kirocli-x86_64-linux.zip"
 
 RESTRICT=mirror
 
@@ -19,7 +19,7 @@ RESTRICT=mirror
 # unpacked) inside ${WORKDIR}.  The default value for S is ${WORKDIR}/${P}
 # If you don't need to change it, leave the S= line out of the ebuild
 # to keep it tidy.
-S="${WORKDIR}/q"
+S="${WORKDIR}/kirocli"
 
 
 # License of the package.  This must match the name of file(s) in the
@@ -30,6 +30,11 @@ LICENSE=""
 SLOT="0"
 
 KEYWORDS="~amd64"
+
+PATCHES=(
+	"${FILESDIR}"/q.patch
+	"${FILESDIR}"/qchat.patch
+)
 
 #IUSE="gnome X"
 
@@ -50,7 +55,11 @@ echo
 # you only need to call it, if you need different behaviour.
 src_install() {
     mkdir -p ${D}/usr/local/bin
-    cp ${WORKDIR}/q/bin/q ${D}/usr/local/bin
-    cp ${WORKDIR}/q/bin/qchat ${D}/usr/local/bin
-    cp ${WORKDIR}/q/bin/qterm ${D}/usr/local/bin
+    cp ${WORKDIR}/kirocli/bin/q ${D}/usr/local/bin
+    cp ${WORKDIR}/kirocli/bin/qchat ${D}/usr/local/bin
+
+	exeinto /usr/bin
+    doexe ${WORKDIR}/kirocli/bin/kiro-cli
+    doexe ${WORKDIR}/kirocli/bin/kiro-cli-chat
+    doexe ${WORKDIR}/kirocli/bin/kiro-cli-term
 }
