@@ -36,7 +36,7 @@ PATCHES=(
 	"${FILESDIR}"/qchat.patch
 )
 
-#IUSE="gnome X"
+IUSE="q-stub"
 
 
 # The following src_configure function is implemented as default by portage, so
@@ -54,12 +54,19 @@ echo
 # The following src_install function is implemented as default by portage, so
 # you only need to call it, if you need different behaviour.
 src_install() {
-    mkdir -p ${D}/usr/local/bin
-    cp ${WORKDIR}/kirocli/bin/q ${D}/usr/local/bin
-    cp ${WORKDIR}/kirocli/bin/qchat ${D}/usr/local/bin
+    if use q-stub ; then
+       mkdir -p ${D}/usr/local/bin
+       cp ${WORKDIR}/kirocli/bin/q ${D}/usr/local/bin
+       cp ${WORKDIR}/kirocli/bin/qchat ${D}/usr/local/bin
+	fi
 
 	exeinto /usr/bin
     doexe ${WORKDIR}/kirocli/bin/kiro-cli
     doexe ${WORKDIR}/kirocli/bin/kiro-cli-chat
     doexe ${WORKDIR}/kirocli/bin/kiro-cli-term
 }
+
+pkg_postinst() {
+    elog "The \"q\" stub is no longer placed in /usr/local/bin unless the"
+	elog "q-stub use flag is set."
+	}
