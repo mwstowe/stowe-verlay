@@ -1,0 +1,11 @@
+# /etc/conf.d/calibre-web
+
+# User/group to run as
+#CALIBRE_WEB_USER="calibre"
+#CALIBRE_WEB_GROUP="calibre"
+
+# Data directory (contains app.db and metadata.db symlink)
+#CALIBRE_WEB_DATADIR="/var/lib/calibre-web"
+
+# Log file
+#CALIBRE_WEB_LOGFILE="/var/log/calibre-web/calibre-web.log"

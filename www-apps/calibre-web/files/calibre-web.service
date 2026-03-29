@@ -1,0 +1,15 @@
+[Unit]
+Description=Calibre-Web eBook management
+After=network.target
+
+[Service]
+Type=simple
+User=calibre
+Group=calibre
+Environment=CALIBRE_DBPATH=/var/lib/calibre-web
+ExecStart=/usr/bin/cps
+WorkingDirectory=/var/lib/calibre-web
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
