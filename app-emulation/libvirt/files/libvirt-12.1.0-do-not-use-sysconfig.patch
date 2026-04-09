@@ -1,8 +1,10 @@
-From bdc0f6b9c91615c601ea3a625220097f5cb0eeb0 Mon Sep 17 00:00:00 2001
-Message-ID: <bdc0f6b9c91615c601ea3a625220097f5cb0eeb0.1696413637.git.mprivozn@redhat.com>
+From 797c16b42aa6cd73ef5e8624de1945893aee2366 Mon Sep 17 00:00:00 2001
+Message-ID: <797c16b42aa6cd73ef5e8624de1945893aee2366.1771336459.git.mprivozn@redhat.com>
 From: Michal Privoznik <mprivozn@redhat.com>
 Date: Wed, 2 Mar 2022 10:01:04 +0100
-Subject: [PATCH] libvirt-9.9.0-do-not-use-sysconfig.patch
+Subject: [PATCH] libvirt-12.1.0-do-not-use-sysconfig.patch
+
+From: Michal Privoznik <mprivozn@redhat.com>
 
 Signed-off-by: Michal Privoznik <mprivozn@redhat.com>
 ---
@@ -14,7 +16,7 @@ Signed-off-by: Michal Privoznik <mprivozn@redhat.com>
  5 files changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/src/locking/virtlockd.service.in b/src/locking/virtlockd.service.in
-index ce00b6def9..9dee9189db 100644
+index cd6c77c6af..1746f0e8c9 100644
 --- a/src/locking/virtlockd.service.in
 +++ b/src/locking/virtlockd.service.in
 @@ -10,7 +10,6 @@ After=virtlockd-admin.socket
@@ -24,9 +26,9 @@ index ce00b6def9..9dee9189db 100644
 -EnvironmentFile=-@initconfdir@/virtlockd
  ExecStart=@sbindir@/virtlockd $VIRTLOCKD_ARGS
  ExecReload=/bin/kill -USR1 $MAINPID
- # Losing the locks is a really bad thing that will
+ 
 diff --git a/src/logging/virtlogd.service.in b/src/logging/virtlogd.service.in
-index 52c9e5bb9e..90c63f0483 100644
+index bcc356f9d1..94d3be9dee 100644
 --- a/src/logging/virtlogd.service.in
 +++ b/src/logging/virtlogd.service.in
 @@ -10,7 +10,6 @@ After=virtlogd-admin.socket
@@ -36,37 +38,37 @@ index 52c9e5bb9e..90c63f0483 100644
 -EnvironmentFile=-@initconfdir@/virtlogd
  ExecStart=@sbindir@/virtlogd $VIRTLOGD_ARGS
  ExecReload=/bin/kill -USR1 $MAINPID
- # Losing the logs is a really bad thing that will
+ 
 diff --git a/src/remote/libvirtd.service.in b/src/remote/libvirtd.service.in
-index 24a6712b75..e4b4a189e1 100644
+index 7965010a0a..031199b76d 100644
 --- a/src/remote/libvirtd.service.in
 +++ b/src/remote/libvirtd.service.in
-@@ -28,7 +28,6 @@ Conflicts=xendomains.service
+@@ -30,7 +30,6 @@ Conflicts=xendomains.service
  [Service]
- Type=notify
+ Type=notify-reload
  Environment=LIBVIRTD_ARGS="--timeout 120"
 -EnvironmentFile=-@initconfdir@/libvirtd
+ Environment=SECRETS_ENCRYPTION_KEY=%d/secrets-encryption-key
+ LoadCredentialEncrypted=secrets-encryption-key:@localstatedir@/lib/libvirt/secrets/secrets-encryption-key
  ExecStart=@sbindir@/libvirtd $LIBVIRTD_ARGS
- ExecReload=/bin/kill -HUP $MAINPID
- KillMode=process
 diff --git a/src/virtd.service.in b/src/virtd.service.in
-index 651a8d82d7..b87c7e0553 100644
+index 7ffb77e339..92a48da90c 100644
 --- a/src/virtd.service.in
 +++ b/src/virtd.service.in
 @@ -17,7 +17,6 @@ After=apparmor.service
  [Service]
- Type=notify
+ Type=notify-reload
  Environment=@SERVICE@_ARGS="--timeout 120"
 -EnvironmentFile=-@initconfdir@/@service@
  ExecStart=@sbindir@/@service@ $@SERVICE@_ARGS
  ExecReload=/bin/kill -HUP $MAINPID
  Restart=on-failure
 diff --git a/tools/libvirt-guests.service.in b/tools/libvirt-guests.service.in
-index c547218f2a..f5a1a60abe 100644
+index c8e4d3d749..28f26e31ba 100644
 --- a/tools/libvirt-guests.service.in
 +++ b/tools/libvirt-guests.service.in
-@@ -14,7 +14,7 @@ Documentation=man:libvirt-guests(8)
- Documentation=https://libvirt.org
+@@ -14,7 +14,7 @@ After=virtxend.socket
+ After=virt-guest-shutdown.target
  
  [Service]
 -EnvironmentFile=-@initconfdir@/libvirt-guests
@@ -75,5 +77,5 @@ index c547218f2a..f5a1a60abe 100644
  # out the code
  ExecStart=@libexecdir@/libvirt-guests.sh start
 -- 
-2.41.0
+2.52.0
 
