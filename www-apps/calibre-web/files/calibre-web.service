@@ -10,6 +10,7 @@ Environment=CALIBRE_DBPATH=/var/lib/calibre-web
 ExecStart=/usr/bin/cps
 WorkingDirectory=/var/lib/calibre-web
 Restart=on-failure
+LimitNOFILE=65536
 
 [Install]
 WantedBy=multi-user.target
