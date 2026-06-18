@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<longdescription>
+		Comchap uses comskip to detect commercials and adds chapter markers
+		to video files. Comcut removes detected commercials entirely.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">BrettSheleski/comchap</remote-id>
+	</upstream>
+</pkgmetadata>

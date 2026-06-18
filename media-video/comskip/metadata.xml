@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<longdescription>
+		Comskip is a free commercial detector that analyzes MPEG or H.264
+		video files and generates a list of commercial breaks for use with
+		video editing or playback software.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">erikkaashoek/Comskip</remote-id>
+	</upstream>
+	<use>
+		<flag name="sdl">Enable SDL-based GUI display</flag>
+	</use>
+</pkgmetadata>
