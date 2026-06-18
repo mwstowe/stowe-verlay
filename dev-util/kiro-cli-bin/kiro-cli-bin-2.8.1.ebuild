@@ -65,8 +65,3 @@ src_install() {
     doexe ${WORKDIR}/kirocli/bin/kiro-cli-chat
     doexe ${WORKDIR}/kirocli/bin/kiro-cli-term
 }
-
-pkg_postinst() {
-    elog "The \"q\" stub is no longer placed in /usr/local/bin unless the"
-	elog "q-stub use flag is set."
-	}
