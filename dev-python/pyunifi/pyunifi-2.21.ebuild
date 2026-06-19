@@ -17,6 +17,7 @@ S=${WORKDIR}/${P}
 LICENSE="MIT License"
 SLOT="0"
 KEYWORDS="~amd64"
+RESTRICT="mirror"
 IUSE=""
 
 PATCHES=(

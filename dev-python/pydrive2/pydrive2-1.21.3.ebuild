@@ -10,7 +10,7 @@ DESCRIPTION="Google Drive API Python wrapper library, maintained fork of PyDrive
 HOMEPAGE="https://pypi.org/project/pydrive2/"
 LICENSE="Apache-2.0"
 SRC_URI="https://files.pythonhosted.org/packages/source/${REALNAME::1}/${REALNAME}/${REALNAME}-${PV}.tar.gz"
-RESTRICT="test"
+RESTRICT="mirror test"
 
 SLOT="0"
 KEYWORDS="~amd64 ~x86"

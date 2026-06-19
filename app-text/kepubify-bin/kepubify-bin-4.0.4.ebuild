@@ -15,7 +15,7 @@ SRC_URI="
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="-* ~amd64 ~arm64"
-RESTRICT="strip"
+RESTRICT="mirror strip"
 
 QA_PREBUILT="usr/bin/kepubify"
 

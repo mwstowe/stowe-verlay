@@ -10,7 +10,7 @@ DESCRIPTION="Doing the OAuth dance with style using Flask, requests, and oauthli
 HOMEPAGE="https://pypi.org/project/flask-dance/"
 LICENSE="MIT"
 SRC_URI="https://files.pythonhosted.org/packages/source/${REALNAME::1}/${REALNAME}/${REALNAME}-${PV}.tar.gz"
-RESTRICT="test"
+RESTRICT="mirror test"
 
 SLOT="0"
 KEYWORDS="~amd64 ~x86"

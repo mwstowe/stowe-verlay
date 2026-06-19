@@ -10,7 +10,7 @@ DESCRIPTION="Various utility functions for SQLAlchemy"
 HOMEPAGE="https://pypi.org/project/sqlalchemy-utils/"
 LICENSE="BSD"
 SRC_URI="https://files.pythonhosted.org/packages/source/${REALNAME::1}/${REALNAME}/${REALNAME}-${PV}.tar.gz"
-RESTRICT="test"
+RESTRICT="mirror test"
 
 SLOT="0"
 KEYWORDS="~amd64 ~x86"

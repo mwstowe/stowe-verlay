@@ -12,7 +12,7 @@ HOMEPAGE="https://pypi.org/project/Flask-Principal/"
 LICENSE="MIT"
 SRC_URI="https://files.pythonhosted.org/packages/source/${REALNAME::1}/${REALNAME}/${REALNAME}-${REALVERSION}.tar.gz"
 S="${WORKDIR}/${REALNAME}-${REALVERSION}"
-RESTRICT="test"
+RESTRICT="mirror test"
 
 SLOT="0"
 KEYWORDS="~amd64 ~x86"

@@ -10,7 +10,7 @@ DESCRIPTION="LDAP authentication extension for Flask"
 HOMEPAGE="https://pypi.org/project/flask-simpleldap/"
 LICENSE="MIT"
 SRC_URI="https://files.pythonhosted.org/packages/source/${REALNAME::1}/${REALNAME}/${REALNAME}-${PV}.tar.gz"
-RESTRICT="test"
+RESTRICT="mirror test"
 
 SLOT="0"
 KEYWORDS="~amd64 ~x86"

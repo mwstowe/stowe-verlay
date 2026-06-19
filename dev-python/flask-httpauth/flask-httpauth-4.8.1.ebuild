@@ -11,7 +11,7 @@ DESCRIPTION="HTTP authentication for Flask routes."
 HOMEPAGE="https://pypi.org/project/Flask-HTTPAuth/"
 LICENSE="MIT"
 SRC_URI="https://files.pythonhosted.org/packages/source/${REALNAME::1}/${REALNAME}/${REALNAME}-${REALVERSION}.tar.gz"
-RESTRICT="test"
+RESTRICT="mirror test"
 
 SLOT="0"
 KEYWORDS="~amd64 ~x86"

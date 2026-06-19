@@ -10,7 +10,7 @@ DESCRIPTION="Coroutine-based network library"
 HOMEPAGE="https://pypi.org/project/gevent/"
 LICENSE="MIT"
 SRC_URI="https://files.pythonhosted.org/packages/source/${PN::1}/${PN}/${PN}-${PV}.tar.gz"
-RESTRICT="test"
+RESTRICT="mirror test"
 
 SLOT="0"
 KEYWORDS="~amd64 ~x86"

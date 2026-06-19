@@ -232,3 +232,4 @@ LICENSE="0BSD Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD Boost-1.0 ISC MIT U
 LICENSE+=" Apache-2.0 BSD ISC MIT Unicode-3.0 ZLIB"
 SLOT="0"
 KEYWORDS="~amd64"
+RESTRICT="mirror"

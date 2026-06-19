@@ -29,7 +29,7 @@ RDEPEND="${BDEPEND}
 	!net-analyzer/monitoring-plugins"
 
 # At least one test is interactive.
-RESTRICT="test"
+RESTRICT="mirror test"
 
 # These all come from gnulib and the ./configure checks are working as
 # intended when the functions aren't present. Bugs 907755 and 924341.

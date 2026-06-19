@@ -40,7 +40,7 @@ IUSE="
 	parted pcap policykit +qemu rbd sasl selinux test +udev
 	virtiofsd virtualbox +virt-network wireshark-plugins xen zfs
 "
-RESTRICT="!test? ( test )"
+RESTRICT="mirror !test? ( test )"
 
 REQUIRED_USE="
 	firewalld? ( virt-network )

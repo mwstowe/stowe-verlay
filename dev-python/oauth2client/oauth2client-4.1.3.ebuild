@@ -9,7 +9,7 @@ DESCRIPTION="OAuth 2.0 client library (deprecated, used by PyDrive2)"
 HOMEPAGE="https://pypi.org/project/oauth2client/"
 LICENSE="Apache-2.0"
 SRC_URI="https://files.pythonhosted.org/packages/source/${PN::1}/${PN}/${PN}-${PV}.tar.gz"
-RESTRICT="test"
+RESTRICT="mirror test"
 
 SLOT="0"
 KEYWORDS="~amd64 ~x86"

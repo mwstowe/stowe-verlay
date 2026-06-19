@@ -11,7 +11,7 @@ DESCRIPTION="Form rendering, validation, and CSRF protection for Flask with WTFo
 HOMEPAGE="https://pypi.org/project/Flask-WTF/"
 LICENSE="BSD"
 SRC_URI="https://files.pythonhosted.org/packages/source/${REALNAME::1}/${REALNAME}/${REALNAME}-${REALVERSION}.tar.gz"
-RESTRICT="test"
+RESTRICT="mirror test"
 
 SLOT="0"
 KEYWORDS="~amd64 ~x86"

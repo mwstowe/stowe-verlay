@@ -18,7 +18,7 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="calibre comics gdrive kepubify kobo ldap metadata oauth unrar"
-RESTRICT="test"
+RESTRICT="mirror test"
 
 PATCHES=(
 	"${FILESDIR}"/fix-flask-limiter-3.x.patch

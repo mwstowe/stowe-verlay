@@ -11,6 +11,7 @@ SRC_URI="https://github.com/coppermine-gallery/cpg1.6.x/archive/v${PV}.zip"
 
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~sparc ~x86"
+RESTRICT="mirror"
 IUSE=""
 
 BDEPEND="app-arch/unzip"

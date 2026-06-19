@@ -14,6 +14,7 @@ S="${WORKDIR}/${PN}-${COMMIT}"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror"
 
 RDEPEND="
 	media-video/comskip
