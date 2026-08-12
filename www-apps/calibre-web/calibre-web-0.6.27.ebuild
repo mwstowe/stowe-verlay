@@ -17,7 +17,7 @@ S="${WORKDIR}/${PYPI_PN}-${PV}"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="calibre comics gdrive kepubify kobo ldap metadata oauth unrar"
+IUSE="calibre comics gdrive gdrive-send kepubify kobo ldap metadata oauth unrar"
 RESTRICT="mirror test"
 
 RDEPEND="
@@ -73,6 +73,10 @@ RDEPEND="
 	)
 	unrar? ( app-arch/unrar )
 	kepubify? ( app-text/kepubify-bin )
+	gdrive-send? (
+		>=dev-python/google-auth-oauthlib-1.0.0[${PYTHON_USEDEP}]
+		dev-python/google-api-python-client[${PYTHON_USEDEP}]
+	)
 "
 
 src_install() {
