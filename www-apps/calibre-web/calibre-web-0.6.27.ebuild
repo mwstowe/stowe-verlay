@@ -11,7 +11,9 @@ inherit distutils-r1 pypi systemd
 
 DESCRIPTION="Web app for browsing, reading and downloading eBooks stored in a Calibre database"
 HOMEPAGE="https://github.com/janeczku/calibre-web"
-SRC_URI="$(pypi_sdist_url "${PYPI_PN}" "${PV}")"
+GDRIVE_SEND_COMMIT="5a127ea60cae76c17180202a59d6003d7393827a"
+SRC_URI="$(pypi_sdist_url "${PYPI_PN}" "${PV}")
+	gdrive-send? ( https://github.com/mwstowe/calibre-web/commit/${GDRIVE_SEND_COMMIT}.patch -> ${P}-gdrive-send.patch )"
 S="${WORKDIR}/${PYPI_PN}-${PV}"
 
 LICENSE="GPL-3"
@@ -79,6 +81,13 @@ RDEPEND="
 	)
 "
 
+src_prepare() {
+	if use gdrive-send; then
+		eapply "${DISTDIR}/${P}-gdrive-send.patch"
+	fi
+	distutils-r1_src_prepare
+}
+
 src_install() {
 	distutils-r1_src_install
 
@@ -122,5 +131,11 @@ pkg_postinst() {
 		elog ""
 		elog "kepubify is available for EPUB to Kobo KEPUB conversion."
 		elog "Set the path to /usr/bin/kepubify in the admin interface."
+	fi
+	if use gdrive-send; then
+		elog ""
+		elog "Google Drive Send is enabled. Configure OAuth client credentials"
+		elog "in the admin panel under Google Drive Send Settings. Users can"
+		elog "then connect their Google Drive from their profile page."
 	fi
 }
