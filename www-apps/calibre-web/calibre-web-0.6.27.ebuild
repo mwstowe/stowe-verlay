@@ -11,9 +11,7 @@ inherit distutils-r1 pypi systemd
 
 DESCRIPTION="Web app for browsing, reading and downloading eBooks stored in a Calibre database"
 HOMEPAGE="https://github.com/janeczku/calibre-web"
-GDRIVE_SEND_COMMIT="5a127ea60cae76c17180202a59d6003d7393827a"
-SRC_URI="$(pypi_sdist_url "${PYPI_PN}" "${PV}")
-	gdrive-send? ( https://github.com/mwstowe/calibre-web/commit/${GDRIVE_SEND_COMMIT}.patch -> ${P}-gdrive-send.patch )"
+SRC_URI="$(pypi_sdist_url "${PYPI_PN}" "${PV}")"
 S="${WORKDIR}/${PYPI_PN}-${PV}"
 
 LICENSE="GPL-3"
@@ -21,6 +19,11 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="calibre comics gdrive gdrive-send kepubify kobo ldap metadata oauth unrar"
 RESTRICT="mirror test"
+
+# Patch from mwstowe/calibre-web gdrive-send-feature branch
+# Commit: 5a127ea60cae76c17180202a59d6003d7393827a
+# Rebased to PyPI sdist layout (src/calibreweb/cps/...)
+GDRIVE_SEND_PATCHES="gdrive-send.patch"
 
 RDEPEND="
 	acct-user/calibre
@@ -83,7 +86,7 @@ RDEPEND="
 
 src_prepare() {
 	if use gdrive-send; then
-		eapply "${DISTDIR}/${P}-gdrive-send.patch"
+		eapply "${FILESDIR}/${GDRIVE_SEND_PATCHES}"
 	fi
 	distutils-r1_src_prepare
 }

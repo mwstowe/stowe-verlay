@@ -1,0 +1,767 @@
+From 5a127ea60cae76c17180202a59d6003d7393827a Mon Sep 17 00:00:00 2001
+From: Michael Stowe <mstowe@gmail.com>
+Date: Sat, 25 Apr 2026 16:20:59 -0700
+Subject: [PATCH] Add Send to Google Drive feature with per-user OAuth2
+
+Allow users to send ebooks directly to their personal Google Drive.
+
+Features:
+- Admin configures Google OAuth client credentials via admin panel
+- Users connect their Google Drive from their profile page
+- Send to Google Drive buttons on book detail pages
+- Supports EPUB, PDF, AZW3, CBZ, CBR formats directly
+- Convert MOBI/AZW3 to EPUB and send (when ebook-convert is available)
+- Per-user OAuth2 tokens with encrypted client secret storage
+- Background upload via WorkerThread task queue
+- Auto-creates configurable target folder in user's Drive
+
+Technical details:
+- New TaskGdriveSend background task (cps/tasks/gdrive_send.py)
+- New gdrive_send_token and gdrive_send_folder columns on User model
+- New config_gdrive_send_client_id/secret_e on Settings model
+- PKCE support for Google OAuth flow
+- ProxyFix middleware for reverse proxy compatibility
+- Documentation at docs/gdrive-send.md
+---
+ .gitignore                          |   1 +
+ cps/__init__.py                     |   2 +
+ cps/admin.py                        |  32 ++++++
+ cps/config_sql.py                   |   3 +
+ cps/helper.py                       |  63 ++++++++++-
+ cps/tasks/convert.py                |  16 ++-
+ cps/tasks/gdrive_send.py            | 155 ++++++++++++++++++++++++++++
+ cps/templates/admin.html            |  19 ++++
+ cps/templates/detail.html           |  27 +++++
+ cps/templates/gdrive_send_edit.html |  25 +++++
+ cps/templates/user_edit.html        |  19 ++++
+ cps/ub.py                           |  17 +++
+ cps/web.py                          | 132 ++++++++++++++++++++++-
+ docs/gdrive-send.md                 | 115 +++++++++++++++++++++
+ 14 files changed, 622 insertions(+), 4 deletions(-)
+ create mode 100644 cps/tasks/gdrive_send.py
+ create mode 100644 cps/templates/gdrive_send_edit.html
+ create mode 100644 docs/gdrive-send.md
+
+diff --git a/src/calibreweb/cps/__init__.py b/src/calibreweb/cps/__init__.py
+index ddd5de65c9..59e4994b85 100644
+--- a/src/calibreweb/cps/__init__.py
++++ b/src/calibreweb/cps/__init__.py
+@@ -84,6 +84,8 @@
+ log = logger.create()
+ 
+ app = Flask(__name__)
++from werkzeug.middleware.proxy_fix import ProxyFix
++app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+ app.config.update(
+     SESSION_COOKIE_HTTPONLY=True,
+     SESSION_COOKIE_SAMESITE='Lax',
+diff --git a/src/calibreweb/cps/admin.py b/src/calibreweb/cps/admin.py
+index 7bddc1bd11..af4082809e 100644
+--- a/src/calibreweb/cps/admin.py
++++ b/src/calibreweb/cps/admin.py
+@@ -1387,6 +1387,38 @@ def update_mailsettings():
+     return edit_mailsettings()
+ 
+ 
++@admi.route("/admin/gdrivesend", methods=["GET"])
++@user_login_required
++@admin_required
++def edit_gdrive_send_settings():
++    content = {
++        'config_gdrive_send_client_id': config.config_gdrive_send_client_id,
++        'config_gdrive_send_client_secret_e': config.config_gdrive_send_client_secret_e,
++    }
++    redirect_uri = url_for('web.gdrive_send_callback', _external=True)
++    return render_title_template("gdrive_send_edit.html", content=content,
++                                 redirect_uri=redirect_uri,
++                                 title=_("Edit Google Drive Send Settings"), page="gdrivesendset")
++
++
++@admi.route("/admin/gdrivesend", methods=["POST"])
++@user_login_required
++@admin_required
++def update_gdrive_send_settings():
++    to_save = request.form.to_dict()
++    config.config_gdrive_send_client_id = to_save.get('config_gdrive_send_client_id', '').strip()
++    if to_save.get('config_gdrive_send_client_secret_e', ''):
++        config.config_gdrive_send_client_secret_e = to_save.get('config_gdrive_send_client_secret_e', '').strip()
++    try:
++        config.save()
++        flash(_("Google Drive Send Settings updated"), category="success")
++    except (OperationalError, InvalidRequestError) as e:
++        ub.session.rollback()
++        log.error_or_exception("Settings Database error: {}".format(e))
++        flash(_("Oops! Database Error: %(error)s.", error=e.orig), category="error")
++    return edit_gdrive_send_settings()
++
++
+ @admi.route("/admin/scheduledtasks")
+ @user_login_required
+ @admin_required
+diff --git a/src/calibreweb/cps/config_sql.py b/src/calibreweb/cps/config_sql.py
+index ed59829d6f..51ef39897c 100644
+--- a/src/calibreweb/cps/config_sql.py
++++ b/src/calibreweb/cps/config_sql.py
+@@ -180,6 +180,9 @@ class _Settings(_Base):
+     config_limiter_options = Column(String, default="")
+     config_check_extensions = Column(Boolean, default=True)
+ 
++    config_gdrive_send_client_id = Column(String, default='')
++    config_gdrive_send_client_secret_e = Column(String)
++
+     def __repr__(self):
+         return self.__class__.__name__
+ 
+diff --git a/src/calibreweb/cps/helper.py b/src/calibreweb/cps/helper.py
+index d813c1e342..cba8e1d4ec 100644
+--- a/src/calibreweb/cps/helper.py
++++ b/src/calibreweb/cps/helper.py
+@@ -65,6 +65,7 @@
+ from .tasks.mail import TaskEmail
+ from .tasks.thumbnail import TaskClearCoverThumbnailCache, TaskGenerateCoverThumbnails
+ from .tasks.metadata_backup import TaskBackupMetadata
++from .tasks.gdrive_send import TaskGdriveSend
+ from .file_helper import get_temp_dir
+ from .epub_helper import get_content_opf, create_new_metadata_backup, updateEpub, replace_metadata
+ from .embed_helper import do_calibre_export
+@@ -81,7 +82,7 @@
+ 
+ 
+ # Convert existing book entry to new format
+-def convert_book_format(book_id, calibre_path, old_book_format, new_book_format, user_id, ereader_mail=None):
++def convert_book_format(book_id, calibre_path, old_book_format, new_book_format, user_id, ereader_mail=None, gdrive_settings=None):
+     book = calibre_db.get_book(book_id)
+     data = calibre_db.get_book_format(book.id, old_book_format)
+     if not data:
+@@ -113,7 +114,8 @@ def convert_book_format(book_id, calibre_path, old_book_format, new_book_format,
+            link)
+     settings['old_book_format'] = old_book_format
+     settings['new_book_format'] = new_book_format
+-    WorkerThread.add(user_id, TaskConvert(file_path, book.id, txt, settings, ereader_mail, user_id))
++    WorkerThread.add(user_id, TaskConvert(file_path, book.id, txt, settings, ereader_mail, user_id,
++                                         gdrive_settings=gdrive_settings))
+     return None
+ 
+ 
+@@ -199,6 +201,39 @@ def check_send_to_ereader(entry):
+         return None
+ 
+ 
++def check_send_to_gdrive(entry):
++    """Returns available book formats for sending to Google Drive."""
++    if not len(entry.data):
++        return []
++    gdrive_formats = {'EPUB', 'PDF', 'AZW3', 'CBZ', 'CBR'}
++    available = set()
++    book_formats = []
++    for ele in iter(entry.data):
++        available.add(ele.format.upper())
++    for ele in iter(entry.data):
++        fmt = ele.format.upper()
++        if fmt in gdrive_formats:
++            book_formats.append({
++                'format': ele.format.capitalize(),
++                'convert': 0,
++                'text': _('Send %(format)s to Google Drive', format=fmt)
++            })
++    if config.config_converterpath:
++        if 'MOBI' in available and 'EPUB' not in available:
++            book_formats.append({
++                'format': 'Epub',
++                'convert': 1,
++                'text': _('Convert %(orig)s to %(format)s and send to Google Drive', orig='Mobi', format='Epub')
++            })
++        if 'AZW3' in available and 'EPUB' not in available:
++            book_formats.append({
++                'format': 'Epub',
++                'convert': 2,
++                'text': _('Convert %(orig)s to %(format)s and send to Google Drive', orig='Azw3', format='Epub')
++            })
++    return book_formats
++
++
+ # Check if a reader is existing for any of the book formats, if not, return empty list, otherwise return
+ # list with supported formats
+ def check_read_formats(entry):
+@@ -240,6 +275,30 @@ def send_mail(book_id, book_format, convert, ereader_mail, calibrepath, user_id)
+     return _("The requested file could not be read. Maybe wrong permissions?")
+ 
+ 
++def send_to_gdrive(book_id, book_format, user_gdrive_token, gdrive_folder, user_id, convert=0):
++    """Queue a background task to upload a book to the user's Google Drive."""
++    book = calibre_db.get_book(book_id)
++    if not book:
++        return _("Oops! Selected book is unavailable.")
++
++    if convert == 1:
++        return convert_book_format(book_id, config.get_book_path(), 'mobi', book_format.lower(), user_id,
++                                   gdrive_settings={'token': user_gdrive_token, 'folder': gdrive_folder})
++    if convert == 2:
++        return convert_book_format(book_id, config.get_book_path(), 'azw3', book_format.lower(), user_id,
++                                   gdrive_settings={'token': user_gdrive_token, 'folder': gdrive_folder})
++
++    for entry in iter(book.data):
++        if entry.format.upper() == book_format.upper():
++            filename = entry.name + '.' + book_format.lower()
++            WorkerThread.add(user_id, TaskGdriveSend(
++                book.path, filename, book.title,
++                user_gdrive_token, gdrive_folder, book.id
++            ))
++            return None
++    return _("The requested file could not be read. Maybe wrong permissions?")
++
++
+ def get_valid_filename(value, replace_whitespace=True, chars=128, force_unidecode=False):
+     """
+     Returns the given string converted to a string that can be used for a clean
+diff --git a/src/calibreweb/cps/tasks/convert.py b/src/calibreweb/cps/tasks/convert.py
+index 18a5900017..38fe5e1741 100644
+--- a/src/calibreweb/cps/tasks/convert.py
++++ b/src/calibreweb/cps/tasks/convert.py
+@@ -48,7 +48,7 @@
+ 
+ 
+ class TaskConvert(CalibreTask):
+-    def __init__(self, file_path, book_id, task_message, settings, ereader_mail, user=None):
++    def __init__(self, file_path, book_id, task_message, settings, ereader_mail, user=None, gdrive_settings=None):
+         super(TaskConvert, self).__init__(task_message)
+         self.worker_thread = None
+         self.file_path = file_path
+@@ -57,6 +57,7 @@ def __init__(self, file_path, book_id, task_message, settings, ereader_mail, use
+         self.settings = settings
+         self.ereader_mail = ereader_mail
+         self.user = user
++        self.gdrive_settings = gdrive_settings
+ 
+         self.results = dict()
+ 
+@@ -125,6 +126,19 @@ def run(self, worker_thread):
+                                           )
+                 except Exception as ex:
+                     return self._handleError(str(ex))
++            if self.gdrive_settings:
++                try:
++                    from cps.tasks.gdrive_send import TaskGdriveSend
++                    worker_thread.add(self.user, TaskGdriveSend(
++                        self.results["path"],
++                        filename,
++                        self.title,
++                        self.gdrive_settings["token"],
++                        self.gdrive_settings["folder"],
++                        self.book_id
++                    ))
++                except Exception as ex:
++                    return self._handleError(str(ex))
+ 
+     def _convert_ebook_format(self):
+         error_message = None
+diff --git a/src/calibreweb/cps/tasks/gdrive_send.py b/src/calibreweb/cps/tasks/gdrive_send.py
+new file mode 100644
+index 0000000000..09db3f3884
+--- /dev/null
++++ b/src/calibreweb/cps/tasks/gdrive_send.py
+@@ -0,0 +1,155 @@
++# -*- coding: utf-8 -*-
++
++#  This file is part of the Calibre-Web (https://github.com/janeczku/calibre-web)
++#  License: GPLv3
++
++import os
++
++from flask_babel import lazy_gettext as N_
++
++from cps.services.worker import CalibreTask
++from cps.embed_helper import do_calibre_export
++from cps import logger, config
++from cps import gdriveutils
++
++log = logger.create()
++
++
++class TaskGdriveSend(CalibreTask):
++    """Background task to upload a book file to a user's personal Google Drive."""
++
++    def __init__(self, book_path, filename, book_title, user_gdrive_token, gdrive_folder, book_id=0):
++        super().__init__(N_("Send to Google Drive"))
++        self.book_path = book_path
++        self.filename = filename
++        self.book_title = book_title
++        self.user_gdrive_token = user_gdrive_token
++        self.gdrive_folder = gdrive_folder
++        self.book_id = book_id
++
++    def run(self, worker_thread):
++        try:
++            from google.oauth2.credentials import Credentials
++            from google.auth.transport.requests import Request
++            from googleapiclient.discovery import build
++            from googleapiclient.http import MediaFileUpload
++
++            token = self.user_gdrive_token
++            creds = Credentials(
++                token=token['token'],
++                refresh_token=token['refresh_token'],
++                token_uri=token['token_uri'],
++                client_id=token['client_id'],
++                client_secret=token['client_secret'],
++                scopes=token.get('scopes', ['https://www.googleapis.com/auth/drive.file']),
++            )
++            if token.get('expiry'):
++                from datetime import datetime
++                creds.expiry = datetime.fromisoformat(token['expiry'])
++
++            if creds.expired and creds.refresh_token:
++                creds.refresh(Request())
++
++            # Read the book file
++            file_data = self._get_file(self.book_path, self.filename)
++            if not file_data:
++                return
++
++            # Write to temp file for upload
++            from cps.file_helper import get_temp_dir
++            tmp_dir = get_temp_dir()
++            tmp_file = os.path.join(tmp_dir, self.filename)
++            with open(tmp_file, 'wb') as f:
++                f.write(file_data)
++
++            self.progress = 0.3
++
++            service = build('drive', 'v3', credentials=creds)
++
++            # Find or create target folder
++            parent_id = None
++            if self.gdrive_folder:
++                parent_id = self._find_or_create_folder(service, self.gdrive_folder)
++
++            self.progress = 0.5
++
++            # Upload file
++            file_metadata = {'name': self.filename}
++            if parent_id:
++                file_metadata['parents'] = [parent_id]
++
++            media = MediaFileUpload(tmp_file, resumable=True)
++            service.files().create(body=file_metadata, media_body=media, fields='id').execute()
++
++            self.progress = 0.9
++
++            # Cleanup
++            try:
++                os.remove(tmp_file)
++            except OSError:
++                pass
++
++            self._handleSuccess()
++            log.info("Book '%s' uploaded to Google Drive successfully", self.book_title)
++
++        except Exception as ex:
++            log.error_or_exception(ex)
++            self._handleError("Error uploading to Google Drive: {}".format(ex))
++
++    def _find_or_create_folder(self, service, folder_name):
++        """Find existing folder or create it in the user's Drive root."""
++        query = ("mimeType='application/vnd.google-apps.folder' "
++                 "and name='{}' and trashed=false").format(folder_name.replace("'", "\\'"))
++        results = service.files().list(q=query, spaces='drive', fields='files(id)').execute()
++        files = results.get('files', [])
++        if files:
++            return files[0]['id']
++        # Create folder
++        meta = {'name': folder_name, 'mimeType': 'application/vnd.google-apps.folder'}
++        folder = service.files().create(body=meta, fields='id').execute()
++        return folder['id']
++
++    def _get_file(self, book_path, filename):
++        """Read book file from local storage or library GDrive."""
++        calibre_path = config.get_book_path()
++        extension = os.path.splitext(filename)[1][1:]
++
++        if config.config_use_google_drive:
++            df = gdriveutils.getFileFromEbooksFolder(book_path, filename)
++            if df:
++                datafile = os.path.join(calibre_path, book_path, filename)
++                if not os.path.exists(os.path.join(calibre_path, book_path)):
++                    os.makedirs(os.path.join(calibre_path, book_path))
++                df.GetContentFile(datafile)
++            else:
++                self._handleError("File not found on Google Drive")
++                return None
++            if config.config_binariesdir and config.config_embed_metadata:
++                data_path, data_file = do_calibre_export(self.book_id, extension)
++                datafile = os.path.join(data_path, data_file + "." + extension)
++            with open(datafile, 'rb') as f:
++                data = f.read()
++            os.remove(datafile)
++        else:
++            datafile = os.path.join(calibre_path, book_path, filename)
++            try:
++                if config.config_binariesdir and config.config_embed_metadata:
++                    data_path, data_file = do_calibre_export(self.book_id, extension)
++                    datafile = os.path.join(data_path, data_file + "." + extension)
++                with open(datafile, 'rb') as f:
++                    data = f.read()
++                if config.config_binariesdir and config.config_embed_metadata:
++                    os.remove(datafile)
++            except IOError as e:
++                log.error_or_exception(e)
++                self._handleError("The requested file could not be read.")
++                return None
++        return data
++
++    @property
++    def name(self):
++        return "Google Drive Upload"
++
++    @property
++    def is_cancellable(self):
++        return False
+diff --git a/src/calibreweb/cps/templates/admin.html b/src/calibreweb/cps/templates/admin.html
+index 4e068955c1..e5b3dc56e5 100644
+--- a/src/calibreweb/cps/templates/admin.html
++++ b/src/calibreweb/cps/templates/admin.html
+@@ -101,6 +101,25 @@ <h2>{{_('Email Server Settings')}}</h2>
+     </div>
+   </div>
+ 
++  <div class="row">
++    <div class="col">
++      <h2>{{_('Google Drive Send Settings')}}</h2>
++      <div class="col-xs-12 col-sm-12">
++        <div class="row">
++          <div class="col-xs-6 col-sm-3">{{_('Status')}}</div>
++          <div class="col-xs-6 col-sm-3">
++            {% if config.config_gdrive_send_client_id and config.config_gdrive_send_client_secret_e %}
++              <span class="label label-success">{{_('Configured')}}</span>
++            {% else %}
++              <span class="label label-default">{{_('Not Configured')}}</span>
++            {% endif %}
++          </div>
++        </div>
++      </div>
++      <a class="btn btn-default" id="admin_edit_gdrive_send" href="{{url_for('admin.edit_gdrive_send_settings')}}">{{_('Edit Google Drive Send Settings')}}</a>
++    </div>
++  </div>
++
+   <div class="row">
+     <div class="col">
+       <h2>{{_('Configuration')}}</h2>
+diff --git a/src/calibreweb/cps/templates/detail.html b/src/calibreweb/cps/templates/detail.html
+index a893432718..d6445ed156 100644
+--- a/src/calibreweb/cps/templates/detail.html
++++ b/src/calibreweb/cps/templates/detail.html
+@@ -76,6 +76,33 @@
+                                 </div>
+                             {% endif %}
+                         {% endif %}
++                        {% if entry.gdrive_share_list %}
++                            {% if not current_user.kindle_mail or not entry.email_share_list %}
++                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
++                            {% endif %}
++                            {% if entry.gdrive_share_list.__len__() == 1 %}
++                                <div class="btn-group" role="group">
++                                    <button class="btn btn-primary sendbtn-form" data-href="{{url_for('web.send_to_gdrive_route', book_id=entry.id, book_format=entry.gdrive_share_list[0]['format'], convert=entry.gdrive_share_list[0]['convert'])}}">
++                                        <span class="glyphicon glyphicon-cloud-upload"></span> {{entry.gdrive_share_list[0]['text']}}
++                                    </button>
++                                </div>
++                            {% else %}
++                                <div class="btn-group" role="group">
++                                    <button type="button" class="btn btn-primary dropdown-toggle"
++                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
++                                        <span class="glyphicon glyphicon-cloud-upload"></span>{{ _('Send to Google Drive') }}
++                                        <span class="caret"></span>
++                                    </button>
++                                    <ul class="dropdown-menu" aria-labelledby="send-to-gdrive">
++                                        {% for format in entry.gdrive_share_list %}
++                                            <li>
++                                                <a class="sendbtn-form" data-href="{{url_for('web.send_to_gdrive_route', book_id=entry.id, book_format=format['format'], convert=format['convert'])}}">{{ format['text'] }}</a>
++                                            </li>
++                                        {% endfor %}
++                                    </ul>
++                                </div>
++                            {% endif %}
++                        {% endif %}
+                     {% endif %}
+                     {% if entry.reader_list and current_user.role_viewer() %}
+                         <div class="btn-group" role="group">
+diff --git a/src/calibreweb/cps/templates/gdrive_send_edit.html b/src/calibreweb/cps/templates/gdrive_send_edit.html
+new file mode 100644
+index 0000000000..912aa6a7f7
+--- /dev/null
++++ b/src/calibreweb/cps/templates/gdrive_send_edit.html
+@@ -0,0 +1,25 @@
++{% extends "layout.html" %}
++{% block body %}
++<div class="discover">
++  <h1>{{title}}</h1>
++  <form role="form" class="col-md-10 col-lg-6" method="POST">
++    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
++    <p>{{ _('Enter your Google OAuth2 Client ID and Secret. Create these at') }}
++      <a href="https://console.developers.google.com/apis/credentials" target="_blank">Google Cloud Console</a>.
++      {{ _('Set the redirect URI to:') }}
++    </p>
++    <pre>{{ redirect_uri }}</pre>
++    <p><a href="https://github.com/mwstowe/calibre-web/blob/master/docs/gdrive-send.md" target="_blank">{{ _('Setup guide and troubleshooting') }}</a></p>
++    <div class="form-group">
++      <label for="config_gdrive_send_client_id">{{_('Google OAuth Client ID')}}</label>
++      <input type="text" class="form-control" name="config_gdrive_send_client_id" id="config_gdrive_send_client_id" value="{{ content.config_gdrive_send_client_id or '' }}">
++    </div>
++    <div class="form-group">
++      <label for="config_gdrive_send_client_secret_e">{{_('Google OAuth Client Secret')}}</label>
++      <input type="password" class="form-control" name="config_gdrive_send_client_secret_e" id="config_gdrive_send_client_secret_e" value="">
++    </div>
++    <button type="submit" name="submit" value="submit" class="btn btn-default">{{_('Save')}}</button>
++    <a href="{{ url_for('admin.admin') }}" class="btn btn-default">{{_('Back')}}</a>
++  </form>
++</div>
++{% endblock %}
+diff --git a/src/calibreweb/cps/templates/user_edit.html b/src/calibreweb/cps/templates/user_edit.html
+index b24c6ec069..71ea2f7b37 100644
+--- a/src/calibreweb/cps/templates/user_edit.html
++++ b/src/calibreweb/cps/templates/user_edit.html
+@@ -28,6 +28,25 @@ <h1>{{title}}</h1>
+       <label for="kindle_mail">{{_('Send to eReader Email Address. Use comma to separate emails for multiple eReaders')}}</label>
+       <input type="email" class="form-control" name="kindle_mail" id="kindle_mail" value="{{ content.kindle_mail if content.kindle_mail != None }}">
+     </div>
++    {% if profile and not content.role_anonymous() and config.config_gdrive_send_client_id %}
++    <div class="form-group">
++      <label>{{ _('Google Drive') }}</label>
++      {% if content.gdrive_send_token and content.gdrive_send_token.get('refresh_token') %}
++        <div>
++          <span class="label label-success">{{ _('Connected') }}</span>
++          <a class="btn btn-sm btn-danger" id="gdrive_disconnect" href="{{ url_for('web.gdrive_send_disconnect') }}">{{ _('Disconnect Google Drive') }}</a>
++        </div>
++      {% else %}
++        <div>
++          <a href="{{ url_for('web.gdrive_send_connect') }}" class="btn btn-sm btn-primary">{{ _('Connect Google Drive') }}</a>
++        </div>
++      {% endif %}
++    </div>
++    <div class="form-group">
++      <label for="gdrive_send_folder">{{ _('Google Drive Folder Name') }}</label>
++      <input type="text" class="form-control" name="gdrive_send_folder" id="gdrive_send_folder" value="{{ content.gdrive_send_folder if content.gdrive_send_folder else 'Calibre-Web' }}">
++    </div>
++    {% endif %}
+     {% if not content.role_anonymous() %}
+     <div class="form-group">
+     <label for="locale">{{_('Language')}}</label>
+diff --git a/src/calibreweb/cps/ub.py b/src/calibreweb/cps/ub.py
+index 7b7d0dd917..197d32889d 100644
+--- a/src/calibreweb/cps/ub.py
++++ b/src/calibreweb/cps/ub.py
+@@ -257,6 +257,8 @@ class User(UserBase, Base):
+     remote_auth_token = relationship('RemoteAuthToken', backref='user', lazy='dynamic')
+     view_settings = Column(JSON, default={})
+     kobo_only_shelves_sync = Column(Integer, default=0)
++    gdrive_send_token = Column(JSON, default={})
++    gdrive_send_folder = Column(String(256), default="Calibre-Web")
+ 
+ 
+ if oauth_support:
+@@ -292,6 +294,8 @@ def __init__(self):
+         self.id = None
+         self.role = None
+         self.name = None
++        self.gdrive_send_token = {}
++        self.gdrive_send_folder = None
+         self.loadSettings()
+ 
+     def loadSettings(self):
+@@ -615,6 +619,18 @@ def migrate_remote_auth_token_table(engine, _session):
+             trans.commit()
+ 
+ 
++def migrate_gdrive_send_columns(engine, _session):
++    try:
++        _session.query(exists().where(User.gdrive_send_token)).scalar()
++        _session.commit()
++    except exc.OperationalError:
++        with engine.connect() as conn:
++            trans = conn.begin()
++            conn.execute(text("ALTER TABLE user ADD column 'gdrive_send_token' JSON DEFAULT '{}'"))
++            conn.execute(text("ALTER TABLE user ADD column 'gdrive_send_folder' String DEFAULT 'Calibre-Web'"))
++            trans.commit()
++
++
+ # Migrate database to current version, has to be updated after every database change. Currently, migration from
+ # maybe 4/5 versions back to current should work.
+ # Migration is done by checking if relevant columns are existing, and then adding rows with SQL commands
+@@ -624,6 +640,7 @@ def migrate_Database(_session):
+     migrate_registration_table(engine, _session)
+     migrate_user_session_table(engine, _session)
+     migrate_remote_auth_token_table(engine, _session)
++    migrate_gdrive_send_columns(engine, _session)
+ 
+ 
+ def clean_database(_session):
+diff --git a/src/calibreweb/cps/web.py b/src/calibreweb/cps/web.py
+index 590701ebba..cb98956dbf 100644
+--- a/src/calibreweb/cps/web.py
++++ b/src/calibreweb/cps/web.py
+@@ -46,7 +46,7 @@
+ from .helper import check_valid_domain, check_email, check_username, \
+     get_book_cover, get_series_cover_thumbnail, get_download_link, send_mail, generate_random_password, \
+     send_registration_mail, check_send_to_ereader, check_read_formats, tags_filters, reset_password, valid_email, \
+-    edit_book_read_status, valid_password
++    edit_book_read_status, valid_password, check_send_to_gdrive, send_to_gdrive
+ from .binary_helper import resolve_binary_path, SUPPORTED_UNRAR_BINARIES
+ from .pagination import Pagination
+ from .redirect import get_redirect_location
+@@ -1286,6 +1286,27 @@ def send_to_ereader(book_id, book_format, convert):
+     return make_response(jsonify(response))
+ 
+ 
++@web.route('/send_gdrive/<int:book_id>/<book_format>/<int:convert>', methods=["POST"])
++@login_required_if_no_ano
++@download_required
++def send_to_gdrive_route(book_id, book_format, convert):
++    token = current_user.gdrive_send_token
++    if not token or not token.get('refresh_token'):
++        response = [{'type': "danger",
++                     'message': _("Please connect your Google Drive account in your profile first.")}]
++        return make_response(jsonify(response))
++    folder = current_user.gdrive_send_folder or "Calibre-Web"
++    result = send_to_gdrive(book_id, book_format, token, folder, current_user.name, convert)
++    if result is None:
++        ub.update_download(book_id, int(current_user.id))
++        response = [{'type': "success",
++                     'message': _("Success! Book queued for upload to Google Drive")}]
++    else:
++        response = [{'type': "danger",
++                     'message': _("Oops! There was an error sending book: %(res)s", res=result)}]
++    return make_response(jsonify(response))
++
++
+ # ################################### Login Logout ##################################################################
+ 
+ @web.route('/register', methods=['POST'])
+@@ -1500,6 +1521,9 @@ def change_profile(kobo_support, local_oauth_check, oauth_status, translations,
+         if old_state == 0 and current_user.kobo_only_shelves_sync == 1:
+             kobo_sync_status.update_on_sync_shelfs(current_user.id)
+ 
++        if to_save.get("gdrive_send_folder", current_user.gdrive_send_folder) != current_user.gdrive_send_folder:
++            current_user.gdrive_send_folder = to_save.get("gdrive_send_folder", "Calibre-Web") or "Calibre-Web"
++
+     except Exception as ex:
+         flash(str(ex), category="error")
+         return render_title_template("user_edit.html",
+@@ -1564,6 +1588,105 @@ def profile():
+                                  oauth_status=oauth_status)
+ 
+ 
++# ###################################Google Drive Send OAuth #############################################################
++
++def _gdrive_send_client_config():
++    return {"web": {
++        "client_id": config.config_gdrive_send_client_id,
++        "client_secret": config.config_gdrive_send_client_secret_e,
++        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
++        "token_uri": "https://oauth2.googleapis.com/token",
++    }}
++
++
++@web.route('/gdrive_send/connect')
++@user_login_required
++def gdrive_send_connect():
++    """Start OAuth2 flow for connecting user's personal Google Drive."""
++    try:
++        from google_auth_oauthlib.flow import Flow
++    except ImportError:
++        flash(_("Google OAuth library not installed. Please install google-auth-oauthlib."), category="error")
++        return redirect(url_for('web.profile'))
++
++    if not config.config_gdrive_send_client_id or not config.config_gdrive_send_client_secret_e:
++        flash(_("Google Drive Send is not configured. Please ask your administrator to set it up."), category="error")
++        return redirect(url_for('web.profile'))
++
++    redirect_uri = url_for('web.gdrive_send_callback', _external=True)
++    flow = Flow.from_client_config(
++        _gdrive_send_client_config(),
++        scopes=['https://www.googleapis.com/auth/drive.file'],
++        redirect_uri=redirect_uri
++    )
++    authorization_url, state = flow.authorization_url(
++        access_type='offline',
++        include_granted_scopes='true',
++        prompt='consent'
++    )
++    flask_session['gdrive_send_state'] = state
++    flask_session['gdrive_send_code_verifier'] = flow.code_verifier
++    return redirect(authorization_url)
++
++
++@web.route('/gdrive_send/callback')
++@user_login_required
++def gdrive_send_callback():
++    """Handle OAuth2 callback from Google."""
++    try:
++        from google_auth_oauthlib.flow import Flow
++    except ImportError:
++        flash(_("Google OAuth library not installed."), category="error")
++        return redirect(url_for('web.profile'))
++
++    redirect_uri = url_for('web.gdrive_send_callback', _external=True)
++    flow = Flow.from_client_config(
++        _gdrive_send_client_config(),
++        scopes=['https://www.googleapis.com/auth/drive.file'],
++        redirect_uri=redirect_uri,
++        state=flask_session.get('gdrive_send_state')
++    )
++    flow.fetch_token(authorization_response=request.url,
++                     code_verifier=flask_session.get('gdrive_send_code_verifier'))
++    creds = flow.credentials
++
++    token_data = {
++        'token': creds.token,
++        'refresh_token': creds.refresh_token,
++        'token_uri': creds.token_uri,
++        'client_id': creds.client_id,
++        'client_secret': creds.client_secret,
++        'scopes': list(creds.scopes) if creds.scopes else [],
++        'expiry': creds.expiry.isoformat() if creds.expiry else None,
++    }
++
++    user = ub.session.query(ub.User).filter(ub.User.id == current_user.id).first()
++    user.gdrive_send_token = token_data
++    try:
++        flag_modified(user, "gdrive_send_token")
++    except AttributeError:
++        pass
++    ub.session_commit("Google Drive connected for user {}".format(current_user.name))
++
++    flash(_("Google Drive connected successfully!"), category="success")
++    return redirect(url_for('web.profile'))
++
++
++@web.route('/gdrive_send/disconnect')
++@user_login_required
++def gdrive_send_disconnect():
++    """Disconnect user's Google Drive."""
++    user = ub.session.query(ub.User).filter(ub.User.id == current_user.id).first()
++    user.gdrive_send_token = {}
++    try:
++        flag_modified(user, "gdrive_send_token")
++    except AttributeError:
++        pass
++    ub.session_commit("Google Drive disconnected for user {}".format(current_user.name))
++    flash(_("Google Drive disconnected."), category="success")
++    return redirect(url_for('web.profile'))
++
++
+ # ###################################Show single book ##################################################################
+ 
+ 
+@@ -1651,6 +1774,13 @@ def show_book(book_id):
+         entry.email_share_list = check_send_to_ereader(entry)
+         entry.reader_list = check_read_formats(entry)
+ 
++        entry.gdrive_share_list = []
++        if (current_user.is_authenticated and
++                hasattr(current_user, 'gdrive_send_token') and
++                current_user.gdrive_send_token and
++                current_user.gdrive_send_token.get('refresh_token')):
++            entry.gdrive_share_list = check_send_to_gdrive(entry)
++
+         entry.reader_list_sizes = dict()
+         for data in entry.data:
+             if data.format.lower() in entry.reader_list:
