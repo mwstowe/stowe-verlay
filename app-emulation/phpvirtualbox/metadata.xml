@@ -2,9 +2,13 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 	<longdescription lang="en">
+		phpVirtualBox is an open source, AJAX implementation of the
+		VirtualBox user interface written in PHP. It allows you to remotely
+		manage VirtualBox virtual machines through a web browser, providing a
+		web-based alternative to the native VirtualBox GUI for headless hosts.
 	</longdescription>
 	<upstream>
-		<remote-id type="google-code">phpvirtualbox</remote-id>
+		<remote-id type="github">phpvirtualbox/phpvirtualbox</remote-id>
 		<remote-id type="sourceforge">phpvirtualbox</remote-id>
 	</upstream>
 </pkgmetadata>

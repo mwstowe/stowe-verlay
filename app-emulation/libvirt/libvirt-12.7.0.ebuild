@@ -10,7 +10,7 @@ EAPI=8
 # app-emulation/libvirt
 # Please bump them together!
 
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( python3_{11..15} )
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/libvirt.org.asc
 inherit meson flag-o-matic linux-info python-any-r1 readme.gentoo-r1
 inherit tmpfiles verify-sig
@@ -96,7 +96,7 @@ RDEPEND="
 	)
 	nfs? ( net-fs/nfs-utils )
 	numa? (
-		>sys-process/numactl-2.0.2
+		>sys-process/numactl-2.0.2-r0
 		sys-process/numad
 	)
 	parted? (
@@ -127,7 +127,7 @@ RDEPEND="
 		sys-apps/iproute2[-minimal]
 	)
 	virtiofsd? ( app-emulation/virtiofsd )
-	virtualbox? ( >app-emulation/virtualbox-7.0.0 )
+	virtualbox? ( >app-emulation/virtualbox-7.0.0-r0 )
 	wireshark-plugins? ( >=net-analyzer/wireshark-2.6.0:= )
 	xen? (
 		>=app-emulation/xen-4.9.0

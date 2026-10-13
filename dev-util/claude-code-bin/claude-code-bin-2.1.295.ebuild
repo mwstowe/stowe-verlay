@@ -8,16 +8,12 @@ HOMEPAGE="https://docs.anthropic.com/en/docs/claude-code"
 
 SRC_URI="https://downloads.claude.ai/claude-code-releases/${PV}/linux-x64/claude -> ${P}-linux-x64"
 
-RESTRICT="mirror strip"
-
 S="${WORKDIR}"
 
 LICENSE="Anthropic-TOS"
 SLOT="0"
 KEYWORDS="~amd64"
-
-RDEPEND=""
-DEPEND=""
+RESTRICT="mirror strip"
 
 # The download is a single binary, not an archive
 src_unpack() {

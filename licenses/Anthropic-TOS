@@ -1,0 +1,29 @@
+Anthropic Commercial Terms of Service
+https://www.anthropic.com/legal/commercial-terms
+
+Claude Code is proprietary software provided by Anthropic and is governed
+by the Anthropic Commercial Terms of Service (the "Terms"), together with
+the policies incorporated into those Terms by reference, including:
+
+  * Usage Policy        https://www.anthropic.com/legal/aup
+  * Supported Regions   https://www.anthropic.com/supported-countries
+  * Service Specific Terms
+                        https://www.anthropic.com/legal/service-specific-terms
+  * Data Processing Addendum
+                        https://www.anthropic.com/legal/commercial-dpa
+
+Summary of key terms (non-authoritative; the online Terms govern):
+
+  * The Terms are an agreement between Anthropic and the Customer and
+    govern use of Anthropic's API keys and other offerings that reference
+    the Terms, along with related tools, documentation, and services.
+  * Use Restrictions: Customers may not use the Services to build a
+    competing product or service (including training competing AI models),
+    resell the Services except as expressly approved, reverse engineer or
+    duplicate the Services, or support any third party in such conduct.
+  * Except as expressly stated, the Terms grant neither party rights to
+    the other's content or intellectual property.
+
+This software is redistributed as a binary with no modification. For the
+complete and authoritative license text, refer to the URL above. The
+version of the Terms effective as of this writing was dated 2025-06-17.

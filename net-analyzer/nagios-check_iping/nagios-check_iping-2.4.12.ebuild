@@ -6,6 +6,7 @@ EAPI=8
 DESCRIPTION="Official plugins for Nagios"
 HOMEPAGE="https://nagios-plugins.org/"
 SRC_URI="https://github.com/nagios-plugins/nagios-plugins/releases/download/release-${PV}/nagios-plugins-${PV}.tar.gz"
+S="${WORKDIR}"/nagios-plugins-${PV}
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -20,7 +21,6 @@ KEYWORDS="~alpha amd64 ~arm ~arm64 ~hppa ~ppc ppc64 sparc x86"
 # Perl really needs to run during the build...
 BDEPEND="${AUTOMAGIC_DEPEND}
 	dev-lang/perl"
-
 
 # Basically everything in net-analyzer/monitoring-plugins collides with
 # nagios-plugins. Perl (from BDEPEND) is needed at runtime, too.
@@ -42,10 +42,8 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 )
 
 PATCHES=(
-  "${FILESDIR}"/check_ping.patch
+	"${FILESDIR}"/check_ping.patch
 )
-
-S="${WORKDIR}"/nagios-plugins-${PV}
 
 src_prepare() {
 	default
@@ -75,12 +73,12 @@ src_configure() {
 }
 
 src_install() {
-    cp -R "${S}/plugins/check_ping" "${S}/plugins/check_iping"
-	exeinto ${ROOT}/usr/$(get_libdir)/nagios/plugins
+	cp -R "${S}/plugins/check_ping" "${S}/plugins/check_iping"
+	exeinto /usr/$(get_libdir)/nagios/plugins
 	doexe plugins/check_iping
 	}
 
 pkg_postinst() {
 	elog
-	elog "check_iping is installed in ${ROOT}/usr/$(get_libdir)/nagios/plugins"
+	elog "check_iping is installed in ${EROOT}/usr/$(get_libdir)/nagios/plugins"
 }

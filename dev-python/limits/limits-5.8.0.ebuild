@@ -2,19 +2,18 @@ EAPI=8
 
 REALNAME="${PN}"
 REALVERSION="${PV}"
-PYTHON_COMPAT=( python3_{12..14} )
+PYTHON_COMPAT=( python3_{12..15} )
 DISTUTILS_USE_PEP517=hatchling
 
 inherit pypi distutils-r1
 
-DESCRIPTION="Rate limiting utilities."
+DESCRIPTION="Rate limiting utilities"
 HOMEPAGE="https://pypi.org/project/limits/"
-LICENSE="MIT"
 SRC_URI="https://files.pythonhosted.org/packages/source/${REALNAME::1}/${REALNAME}/${REALNAME}-${REALVERSION}.tar.gz"
-RESTRICT="mirror test"
-
+LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror test"
 
 BDEPEND="dev-python/hatch-vcs[${PYTHON_USEDEP}]"
 RDEPEND=">=dev-python/deprecated-1.2[${PYTHON_USEDEP}]

@@ -16,8 +16,8 @@ S="${WORKDIR}/Comskip-${COMMIT}"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-RESTRICT="mirror"
 IUSE="sdl"
+RESTRICT="mirror"
 
 DEPEND="
 	media-video/ffmpeg:=

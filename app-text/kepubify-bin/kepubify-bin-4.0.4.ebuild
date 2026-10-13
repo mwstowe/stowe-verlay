@@ -11,6 +11,7 @@ SRC_URI="
 	amd64? ( https://github.com/pgaskin/kepubify/releases/download/${MY_PV}/kepubify-linux-64bit -> ${P}-amd64 )
 	arm64? ( https://github.com/pgaskin/kepubify/releases/download/${MY_PV}/kepubify-linux-arm64 -> ${P}-arm64 )
 "
+S="${WORKDIR}"
 
 LICENSE="MIT"
 SLOT="0"
@@ -18,8 +19,6 @@ KEYWORDS="-* ~amd64 ~arm64"
 RESTRICT="mirror strip"
 
 QA_PREBUILT="usr/bin/kepubify"
-
-S="${WORKDIR}"
 
 src_install() {
 	if use amd64; then

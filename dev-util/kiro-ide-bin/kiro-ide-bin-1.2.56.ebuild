@@ -9,12 +9,13 @@ DESCRIPTION="Kiro IDE - AI-powered development environment by AWS"
 HOMEPAGE="https://kiro.dev/"
 
 SRC_URI="https://prod.download.desktop.kiro.dev/releases/stable/linux-x64/signed/${PV}/tar/kiro-ide-${PV}-stable-linux-x64.tar.gz"
+S="${WORKDIR}"
 
-LICENSE="all-rights-reserved"
+LICENSE="Kiro"
 SLOT="0"
 KEYWORDS="-* ~amd64"
-RESTRICT="mirror strip bindist"
 IUSE="ms-auth"
+RESTRICT="mirror strip bindist"
 
 RDEPEND="
 	>=sys-libs/glibc-2.39
@@ -46,8 +47,6 @@ RDEPEND="
 
 QA_PREBUILT="*"
 
-S="${WORKDIR}"
-
 src_prepare() {
 	default
 	# Remove bundled arm64 binaries (wrong arch, causes QA warnings)
@@ -67,5 +66,6 @@ src_install() {
 
 	newicon Kiro/resources/app/resources/linux/code.png kiro-ide.png
 
-	make_desktop_entry kiro-ide "Kiro" kiro-ide "Development;IDE;" "" "MimeType=text/plain;inode/directory;\nStartupWMClass=kiro"
+	make_desktop_entry kiro-ide "Kiro" kiro-ide "Development;IDE;" "" \
+		"MimeType=text/plain;inode/directory;\nStartupWMClass=kiro"
 }

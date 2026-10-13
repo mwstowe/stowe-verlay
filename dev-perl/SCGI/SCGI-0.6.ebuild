@@ -7,16 +7,14 @@ EAPI=8
 DIST_AUTHOR="VIPERCODE"
 DIST_VERSION="0.6"
 
-
 inherit perl-module
 
-DESCRIPTION="SCGI"
+DESCRIPTION="Perl module implementing the SCGI protocol"
 
 LICENSE="|| ( Artistic GPL-1 GPL-2 GPL-3 )"
 SLOT="0"
 KEYWORDS="amd64"
 RESTRICT="mirror"
-IUSE=""
 
 DEPEND="dev-perl/Module-Build
 	dev-lang/perl"

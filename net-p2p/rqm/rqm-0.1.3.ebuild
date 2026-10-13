@@ -262,10 +262,9 @@ CRATES="
 
 inherit cargo systemd
 
-DESCRIPTION="rqm"
+DESCRIPTION="Rust-based queue manager"
 HOMEPAGE="https://github.com/mwstowe/rqm"
-SRC_URI="$(cargo_crate_uris) https://github.com/mwstowe/rqm/archive/refs/tags/v0.1.3.tar.gz"
-
+SRC_URI="${CARGO_CRATE_URIS} https://github.com/mwstowe/rqm/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 
 # License set may be more restrictive as OR is not respected
 # use cargo-license for a more accurate license picture
@@ -274,14 +273,11 @@ SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
 
-DEPEND=""
 RDEPEND="${DEPEND}"
-BDEPEND=""
 
 # rust does not use *FLAGS from make.conf, silence portage warning
 # update with proper path to binaries this crate installs, omit leading /
 QA_FLAGS_IGNORED="usr/bin/${PN}"
-
 
 src_install() {
 	exeinto /usr/bin

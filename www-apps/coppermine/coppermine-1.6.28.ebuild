@@ -7,18 +7,16 @@ inherit webapp
 
 DESCRIPTION="Web picture gallery written in PHP with a MySQL backend"
 HOMEPAGE="http://coppermine.sourceforge.net/"
-SRC_URI="https://github.com/coppermine-gallery/cpg1.6.x/archive/v${PV}.zip"
+SRC_URI="https://github.com/coppermine-gallery/cpg1.6.x/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+S="${WORKDIR}/cpg1.6.x-${PV}"
 
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~sparc ~x86"
 RESTRICT="mirror"
-IUSE=""
 
 BDEPEND="app-arch/unzip"
 RDEPEND="virtual/httpd-php
 	dev-lang/php[gd,mysql]"
-
-S="${WORKDIR}/cpg1.6.x-${PV}"
 
 need_httpd_cgi
 

@@ -9,7 +9,7 @@ PYPI_PN="calibreweb"
 
 inherit distutils-r1 pypi systemd
 
-DESCRIPTION="Web app for browsing, reading and downloading eBooks stored in a Calibre database"
+DESCRIPTION="Web app to browse, read and download eBooks from a Calibre database"
 HOMEPAGE="https://github.com/janeczku/calibre-web"
 SRC_URI="$(pypi_sdist_url "${PYPI_PN}" "${PV}")"
 S="${WORKDIR}/${PYPI_PN}-${PV}"

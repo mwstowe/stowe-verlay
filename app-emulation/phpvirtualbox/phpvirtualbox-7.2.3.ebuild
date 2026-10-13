@@ -7,17 +7,16 @@ inherit webapp
 
 DESCRIPTION="Web-based administration for VirtualBox in PHP"
 HOMEPAGE="https://github.com/phpvirtualbox/phpvirtualbox/"
-SRC_URI="https://github.com/phpvirtualbox/phpvirtualbox/archive/refs/tags/7.2-3.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror"
+SRC_URI="https://github.com/phpvirtualbox/phpvirtualbox/archive/refs/tags/$(ver_cut 1-2)-3.tar.gz -> ${P}.tar.gz"
+S="${WORKDIR}/phpvirtualbox-7.2-3"
 LICENSE="GPL-3"
 KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror"
 
 RDEPEND="
 	dev-lang/php[session,unicode,soap,gd]
 	virtual/httpd-php:*
 "
-
-S="${WORKDIR}/phpvirtualbox-7.2-3"
 
 src_install() {
 	local DISABLE_AUTOFORMATTING="true"

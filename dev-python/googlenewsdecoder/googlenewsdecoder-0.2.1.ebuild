@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=uv-build
-PYTHON_COMPAT=( python3_{11..14} pypy3 )
+PYTHON_COMPAT=( python3_{11..15} pypy3 )
 
 inherit pypi distutils-r1
 
@@ -14,10 +14,10 @@ SRC_URI="$(pypi_sdist_url "${PN}" "${PV}")"
 
 S=${WORKDIR}/${P}
 
-RESTRICT="mirror"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
+RESTRICT="mirror"
 
 RDEPEND="
 	dev-python/httpx[${PYTHON_USEDEP}]

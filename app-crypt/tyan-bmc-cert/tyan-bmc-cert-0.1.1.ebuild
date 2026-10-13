@@ -219,11 +219,11 @@ CRATES="
 
 inherit cargo
 
-DESCRIPTION="tyan-bmc-cert"
+DESCRIPTION="Tool to manage TLS certificates on Tyan BMC devices"
 # Double check the homepage as the cargo_metadata crate
 # does not provide this value so instead repository is used
 HOMEPAGE="https://github.com/mwstowe/tyan-bmc-cert"
-SRC_URI="$(cargo_crate_uris) https://github.com/mwstowe/tyan-bmc-cert/archive/refs/tags/v0.1.1.tar.gz"
+SRC_URI="${CARGO_CRATE_URIS} https://github.com/mwstowe/tyan-bmc-cert/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 
 # License set may be more restrictive as OR is not respected
 # use cargo-license for a more accurate license picture

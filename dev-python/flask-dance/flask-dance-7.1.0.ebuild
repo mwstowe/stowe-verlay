@@ -1,19 +1,18 @@
 EAPI=8
 
 REALNAME="flask_dance"
-PYTHON_COMPAT=( python3_{12..14} )
+PYTHON_COMPAT=( python3_{12..15} )
 DISTUTILS_USE_PEP517=flit
 
 inherit pypi distutils-r1
 
 DESCRIPTION="Doing the OAuth dance with style using Flask, requests, and oauthlib"
 HOMEPAGE="https://pypi.org/project/flask-dance/"
-LICENSE="MIT"
 SRC_URI="https://files.pythonhosted.org/packages/source/${REALNAME::1}/${REALNAME}/${REALNAME}-${PV}.tar.gz"
-RESTRICT="mirror test"
-
+LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror test"
 
 RDEPEND="
 	dev-python/flask[${PYTHON_USEDEP}]

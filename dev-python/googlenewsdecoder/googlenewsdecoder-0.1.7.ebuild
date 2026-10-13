@@ -4,21 +4,20 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{12..14} pypy3 )
+PYTHON_COMPAT=( python3_{12..15} pypy3 )
 
 inherit pypi distutils-r1
 
 DESCRIPTION="Google News Decoder"
 HOMEPAGE="https://pypi.org/project/googlenewsdecoder/"
-SRC_URI="$(pypi_sdist_url "${PN^}" "${PV}")" 
+SRC_URI="$(pypi_sdist_url "${PN^}" "${PV}")"
 
 S=${WORKDIR}/${P}
 
-RESTRICT="mirror"
-LICENSE="MIT License"
+LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=""
+RESTRICT="mirror"
 
 RDEPEND="
 	$(python_gen_any_dep '
