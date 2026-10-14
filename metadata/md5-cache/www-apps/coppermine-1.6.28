@@ -1,0 +1,16 @@
+BDEPEND=app-arch/unzip
+DEFINED_PHASES=install postinst prerm setup
+DEPEND=|| ( virtual/httpd-cgi virtual/httpd-fastcgi ) app-admin/webapp-config
+DESCRIPTION=Web picture gallery written in PHP with a MySQL backend
+EAPI=8
+HOMEPAGE=http://coppermine.sourceforge.net/
+INHERIT=webapp
+IUSE=vhosts
+KEYWORDS=~amd64 ~sparc ~x86
+LICENSE=GPL-2
+RDEPEND=virtual/httpd-php dev-lang/php[gd,mysql] app-admin/webapp-config
+RESTRICT=mirror
+SLOT=1.6.28
+SRC_URI=https://github.com/coppermine-gallery/cpg1.6.x/archive/v1.6.28.tar.gz -> coppermine-1.6.28.tar.gz
+_eclasses_=webapp	5fa840db95fc7348dfd53b8526ed05f5
+_md5_=9fedcf63b00552da460edda063cf7578

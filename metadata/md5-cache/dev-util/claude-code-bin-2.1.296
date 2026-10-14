@@ -1,0 +1,10 @@
+DEFINED_PHASES=compile configure install unpack
+DESCRIPTION=Claude Code - an agentic coding tool from Anthropic
+EAPI=8
+HOMEPAGE=https://docs.anthropic.com/en/docs/claude-code
+KEYWORDS=~amd64
+LICENSE=Anthropic-TOS
+RESTRICT=mirror strip
+SLOT=0
+SRC_URI=https://downloads.claude.ai/claude-code-releases/2.1.296/linux-x64/claude -> claude-code-bin-2.1.296-linux-x64
+_md5_=ded1d7a57813158e6e70741e70117632

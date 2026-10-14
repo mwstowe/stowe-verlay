@@ -1,0 +1,11 @@
+BDEPEND=app-arch/unzip
+DEFINED_PHASES=compile configure install
+DESCRIPTION=The Amazon KIRO CLI tool (formerly known a Q)
+EAPI=8
+HOMEPAGE=https://kiro.dev/docs/cli/
+KEYWORDS=~amd64
+LICENSE=Kiro
+RESTRICT=mirror
+SLOT=0
+SRC_URI=https://desktop-release.q.us-east-1.amazonaws.com/latest/kirocli-x86_64-linux.zip
+_md5_=6a910326cebd6e2a59bfdd32355a3db9

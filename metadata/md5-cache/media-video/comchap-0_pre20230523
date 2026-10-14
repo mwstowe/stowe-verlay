@@ -1,0 +1,11 @@
+DEFINED_PHASES=install
+DESCRIPTION=Commercial chapter marking and cutting scripts using comskip
+EAPI=8
+HOMEPAGE=https://github.com/BrettSheleski/comchap
+KEYWORDS=~amd64 ~x86
+LICENSE=MIT
+RDEPEND=media-video/comskip media-video/ffmpeg
+RESTRICT=mirror
+SLOT=0
+SRC_URI=https://github.com/BrettSheleski/comchap/archive/dd7db30c258e965f282ac78825971dd0703a031e.tar.gz -> comchap-0_pre20230523.tar.gz
+_md5_=a9edea01563c1fb9df6d6ac25043a326
