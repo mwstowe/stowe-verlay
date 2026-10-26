@@ -9,10 +9,10 @@ inherit pypi distutils-r1
 DESCRIPTION="Fast HTML5 parser with CSS selectors"
 HOMEPAGE="https://github.com/rushter/selectolax"
 LICENSE="MIT"
-
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-
 IUSE="cython"
+
 RESTRICT="mirror test"
+
 BDEPEND="cython? ( dev-python/cython[${PYTHON_USEDEP}] )"
