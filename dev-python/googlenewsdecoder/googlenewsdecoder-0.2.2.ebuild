@@ -1,16 +1,16 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{12..15} pypy3 )
+DISTUTILS_USE_PEP517=uv-build
+PYTHON_COMPAT=( python3_{11..15} pypy3 )
 
 inherit pypi distutils-r1
 
-DESCRIPTION="Google News Decoder"
-HOMEPAGE="https://pypi.org/project/googlenewsdecoder/"
-SRC_URI="$(pypi_sdist_url "${PN^}" "${PV}")"
+DESCRIPTION="A Python package to decode Google News URLs to their original sources"
+HOMEPAGE="https://github.com/SSujitX/google-news-url-decoder"
+SRC_URI="$(pypi_sdist_url "${PN}" "${PV}")"
 
 S=${WORKDIR}/${P}
 
@@ -20,14 +20,8 @@ KEYWORDS="~amd64"
 RESTRICT="mirror"
 
 RDEPEND="
-	$(python_gen_any_dep '
-		dev-python/requests[${PYTHON_USEDEP}]
-		dev-python/urllib3[${PYTHON_USEDEP}]
-		dev-python/selectolax[${PYTHON_USEDEP}]
-		')
+	dev-python/httpx[${PYTHON_USEDEP}]
+	dev-python/h2[${PYTHON_USEDEP}]
+	dev-python/socksio[${PYTHON_USEDEP}]
+	dev-python/selectolax[${PYTHON_USEDEP}]
 "
-DEPEND="${RDEPEND}
-	"
-BDEPEND="${PYTHON_DEPS}
-	virtual/pkgconfig
-	"
