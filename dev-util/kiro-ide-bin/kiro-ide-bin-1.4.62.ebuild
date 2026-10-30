@@ -49,8 +49,13 @@ QA_PREBUILT="*"
 
 src_prepare() {
 	default
-	# Remove bundled arm64 binaries (wrong arch, causes QA warnings)
-	rm -rf Kiro/resources/app/extensions/kiro.kiro-agent/node_modules/onnxruntime-node/bin/napi-v3/linux/arm64 || die
+	# Remove bundled arm64 binaries (wrong arch, causes QA warnings).
+	# Guard on existence so an upstream layout change surfaces as a hard
+	# failure instead of being silently swallowed by `rm -rf`.
+	local arm64_dir="Kiro/resources/app/extensions/kiro.kiro-agent/node_modules/onnxruntime-node/bin/napi-v3/linux/arm64"
+	if [[ -d ${arm64_dir} ]]; then
+		rm -rf "${arm64_dir}" || die
+	fi
 }
 
 src_install() {

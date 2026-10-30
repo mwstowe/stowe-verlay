@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<use>
+		<flag name="ms-auth">
+			Enable Microsoft account authentication support by pulling in
+			libsecret, libsoup and webkit-gtk.
+		</flag>
+	</use>
+</pkgmetadata>
