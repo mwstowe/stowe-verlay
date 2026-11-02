@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<use>
+		<flag name="sabnzbd">Run the service as the sabnzbd account and own data
+			dirs as sabnzbd (common when media is owned by the sabnzbd download
+			client). Disable to choose your own runtime user — see the
+			post-install notes.</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">mwstowe/mediadecay</remote-id>
+	</upstream>
+</pkgmetadata>

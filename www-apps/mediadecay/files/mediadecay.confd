@@ -1,0 +1,16 @@
+# /etc/conf.d/mediadecay
+
+# MediaDecay deletes and moves your media files, so it MUST run as the user/
+# group that owns those files (e.g. sabnzbd, plex, media). The default below
+# is sabnzbd; change it to match your media ownership.
+#MEDIADECAY_USER="sabnzbd"
+#MEDIADECAY_GROUP="sabnzbd"
+
+# Path to the configuration file
+#MEDIADECAY_CONFIG="/etc/mediadecay/config.yaml"
+
+# Data directory (holds mediadecay.db)
+#MEDIADECAY_DATADIR="/var/lib/mediadecay"
+
+# Log file
+#MEDIADECAY_LOGFILE="/var/log/mediadecay/mediadecay.log"

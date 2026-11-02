@@ -1,0 +1,28 @@
+[Unit]
+Description=MediaDecay — media lifecycle management for Plex
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# MediaDecay deletes and relocates media files, so it must run as the user/group
+# that OWNS your media. This base unit does NOT set a user — either install with
+# USE=sabnzbd (which drops in User=sabnzbd), or override here with:
+#   systemctl edit mediadecay
+# and add, under [Service]:
+#   User=youruser
+#   Group=yourgroup
+Environment=MEDIACLEANER_CONFIG=/etc/mediadecay/config.yaml
+WorkingDirectory=/var/lib/mediadecay
+ExecStart=/usr/bin/mediadecay-web
+Restart=on-failure
+RestartSec=5
+
+# NOTE: no ProtectSystem=strict / ReadWritePaths sandboxing. MediaDecay's job is
+# to delete and relocate media across arbitrary, site-specific library paths; a
+# strict read-only filesystem would make those operations fail.
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+#!/sbin/openrc-run
+# Copyright 2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+description="MediaDecay — media lifecycle management for Plex"
+
+: ${MEDIADECAY_USER:=sabnzbd}
+: ${MEDIADECAY_GROUP:=sabnzbd}
+: ${MEDIADECAY_CONFIG:=/etc/mediadecay/config.yaml}
+: ${MEDIADECAY_DATADIR:=/var/lib/mediadecay}
+: ${MEDIADECAY_LOGFILE:=/var/log/mediadecay/mediadecay.log}
+
+export MEDIACLEANER_CONFIG="${MEDIADECAY_CONFIG}"
+
+command="/usr/bin/mediadecay-web"
+command_background=true
+command_user="${MEDIADECAY_USER}:${MEDIADECAY_GROUP}"
+directory="${MEDIADECAY_DATADIR}"
+pidfile="/run/${RC_SVCNAME}.pid"
+output_log="${MEDIADECAY_LOGFILE}"
+error_log="${MEDIADECAY_LOGFILE}"
+
+depend() {
+	need net
+	use plex-media-server sonarr radarr
+}
