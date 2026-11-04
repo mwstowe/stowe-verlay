@@ -32,12 +32,8 @@ RESTRICT=mirror
 # The .zip archive requires unzip to unpack.
 BDEPEND="app-arch/unzip"
 
-# The upstream archive ships pre-stripped binaries; silence the QA notice.
-QA_PRESTRIPPED="
-	usr/bin/kiro-cli
-	usr/bin/kiro-cli-chat
-	usr/bin/kiro-cli-term
-"
+# The upstream archive ships a pre-stripped binary; silence the QA notice.
+QA_PRESTRIPPED="usr/bin/kiro-cli"
 
 # The following src_configure function is implemented as default by portage, so
 # you only need to call it if you need a different behaviour.
@@ -56,6 +52,6 @@ echo
 src_install() {
 	exeinto /usr/bin
 	doexe "${WORKDIR}"/kirocli/bin/kiro-cli
-	doexe "${WORKDIR}"/kirocli/bin/kiro-cli-chat
-	doexe "${WORKDIR}"/kirocli/bin/kiro-cli-term
+
+	dodoc "${WORKDIR}"/kirocli/README
 }
