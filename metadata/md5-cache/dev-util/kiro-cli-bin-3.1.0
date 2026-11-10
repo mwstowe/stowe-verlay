@@ -8,4 +8,4 @@ LICENSE=Kiro
 RESTRICT=mirror
 SLOT=0
 SRC_URI=https://desktop-release.q.us-east-1.amazonaws.com/latest/kirocli-x86_64-linux.zip
-_md5_=6a910326cebd6e2a59bfdd32355a3db9
+_md5_=ec8651ae24f9394a474bd31f5059e46f

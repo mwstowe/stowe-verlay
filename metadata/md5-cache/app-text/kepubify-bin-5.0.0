@@ -1,0 +1,10 @@
+DEFINED_PHASES=install
+DESCRIPTION=Fast EPUB to Kobo KEPUB converter
+EAPI=8
+HOMEPAGE=https://github.com/pgaskin/kepubify
+KEYWORDS=-* ~amd64 ~arm64
+LICENSE=MIT
+RESTRICT=mirror strip
+SLOT=0
+SRC_URI=amd64? ( https://github.com/pgaskin/kepubify/releases/download/v5.0.0/kepubify-linux-64bit -> kepubify-bin-5.0.0-amd64 ) arm64? ( https://github.com/pgaskin/kepubify/releases/download/v5.0.0/kepubify-linux-arm64 -> kepubify-bin-5.0.0-arm64 )
+_md5_=0560b8ac4fa4a77969888b5585b2f5bf
