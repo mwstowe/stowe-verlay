@@ -33,6 +33,7 @@ RDEPEND="
 	>=dev-python/ruamel-yaml-0.18[${PYTHON_USEDEP}]
 	>=dev-python/bcrypt-4.2.1[${PYTHON_USEDEP}]
 	>=dev-python/cheroot-11.1.2[${PYTHON_USEDEP}]
+	>=dev-python/pillow-10.1[jpeg,truetype,${PYTHON_USEDEP}]
 	sabnzbd? (
 		acct-user/sabnzbd
 		acct-group/sabnzbd
